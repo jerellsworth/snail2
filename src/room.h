@@ -1,8 +1,8 @@
 #ifndef ROOM_H_123
 #define ROOM_H_123
 
-#define ROOM_W 5
-#define ROOM_H 4
+#define ROOM_W 9
+#define ROOM_H 7
 #define ROOM_MAX_WALLS 31
 
 #include "bh.h"

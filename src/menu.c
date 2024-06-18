@@ -88,14 +88,14 @@ void Menu_input(Menu *m) {
     }
 }
 
-void Menu_run(Menu *m) {
+void Menu_run(Menu *m, BG *bg) {
+    PAL_setPalette(PAL1, PAL_SPRITE.data, FALSE);
     m->spr_cursor = SPR_addSprite(
-            &SPR_BOLT,
+            &SPR_CURSOR,
             m->x,
             m->y,
-            TILE_ATTR(PAL0, TRUE, FALSE, FALSE)
+            TILE_ATTR(PAL1, TRUE, FALSE, FALSE)
             );
-    SPR_setAnim(m->spr_cursor, 4);
     m->completed = FALSE;
     Menu_draw(m);
     Menu_refresh_cursor(m);
@@ -103,8 +103,20 @@ void Menu_run(Menu *m) {
         random();
         Menu_input(m);
         SPR_update();
+
+        BG_update(bg);
+
         SYS_doVBlankProcess();
     }
+
+    for (u8 i = 0; i < MAX_N_PLAYERS; ++i) {
+        Sprite *sp = m->pl_sprites[i];
+        if (sp) {
+            SPR_releaseSprite(sp);
+            m->pl_sprites[i] = NULL;
+        }
+    }
+
     Menu_hide(m);
 }
 
@@ -180,6 +192,7 @@ void Menu_Item_prev_option(Menu_Item *mi) {
         return;
     }
     --mi->option_selected;
+
 }
 
 void Menu_Item_draw(Menu_Item *mi) {

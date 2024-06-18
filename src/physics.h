@@ -15,24 +15,35 @@ struct Physics_s {
     u16 uid; // TODO not really unique, just distributed
     u8 pal;
     Sprite *sp;
+    Sprite *shadow;
+    u16 anim_no;
+    u16 n_tiles;
     u16 h, w;
-    fixy y, col_y;
-    fixx x, col_x;
-    fix16 dx, dy, ddx, ddy; 
+    fixy y, col_y, hbox_offset_y;
+    fixx x, col_x, hbox_offset_x;
+    fixz z, col_z;
+    fixx start_x;
+    fixy start_y;
+    fixz start_z;
+
+    fix16 dx, dy, ddx, ddy, dz, ddz; 
     Facing f;
     u16 facing_degrees;
     s16 ttl;
     s16 reg;
     fixx center_offset_x;
     fixy center_offset_y;
+    fixz center_offset_z;
     u16 thresh_sq;
     Thing what;
     u8 iframes;
     u16 frames_alive;
     Phy *partner;
     Phy *tgt;
+    fixx goal_x;
+    fixy goal_y;
+    fixz goal_z;
     u16 theta;
-    bool update_direction;
 
     fix16 terminal_velocity_up;
     fix16 terminal_velocity_down;
@@ -46,21 +57,15 @@ struct Physics_s {
     bool calc_collisions; // if both objects have FALSE, don't bother calculating collision
     bool ignore_walls;
 
-    bool get_in_able;
+    bool bg_element;
+    u16 bg_tile_idx;
 
     u8 state;
     u16 state_frames;
 
-    u8 dash_frames;
-    fix16 dash_dx;
-    fix16 dash_dy;
-
     fix16 mass;
 
     Player *pl;
-
-    MSEG *ms;
-    u8 ms_seg_no;
 
     u8 live_spawn;
     u8 *instance_counter;
@@ -68,7 +73,16 @@ struct Physics_s {
     fix16 dx_after_dash, dy_after_dash;
 
     bool blocked;
-    bool charged;
+    u8 charged;
+    s16 english;
+
+    bool ai_flag;
+    fix16 pending_throw_dx;
+    fix16 pending_throw_dy;
+    fix16 pending_throw_dz;
+
+    // TODO dbg
+    Sprite *cursor;
 };
 
 s16 Physics_register(Physics *p);
@@ -76,22 +90,25 @@ s16 Physics_register(Physics *p);
 void Physics_del(Physics *p, Enc *e);
 
 Physics *Physics_new(
+        Enc *e,
         const SpriteDefinition *spriteDef,
-        u8 pal
+        u8 pal,
+        fixx x,
+        fixy y,
+        bool bg_element
         );
 
 void Physics_update(Encounter *enc, Physics *p);
 void Physics_update_all(Encounter *enc);
 
-bool collision(Physics *p1, Physics *p2, u32 thresh);
 bool collision_box(Phy *p1, Phy *p2);
 u32 Physics_dist(Physics *p1, Physics *p2);
-void Physics_direction_to(Physics *from, Physics *to, fix16 *norm_x, fix16 *norm_y, u16 *theta);
-void Physics_set_visibility_all(Thing t, u16 newVisibility);
 void Physics_del_all(Enc *e);
-void Physics_del_all_thing(Enc *e, Thing t);
+void Physics_bg_element_redraw(Physics *p, bool hflip);
+Phy *Physics_collides_with_anything(Phy *p);
+Phy *Physics_collides_with_anything_visual(Phy *p);
+u8 Physics_count(Thing t);
 
 extern Physics **ALL_PHYSICS_OBJS;
-void Physics_spr_set_position_all(Enc *enc);
 
 #endif

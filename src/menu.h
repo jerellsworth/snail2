@@ -35,6 +35,9 @@ struct Menu_s {
     u8 cooldown;
 
     Sprite *spr_cursor;
+
+    Sprite *pl_sprites[MAX_N_PLAYERS];
+
     bool completed;
 };
 
@@ -46,7 +49,7 @@ void Menu_prev_item(Menu *m);
 void Menu_next_option(Menu *m);
 void Menu_prev_option(Menu *m);
 void Menu_select(Menu *m);
-void Menu_run(Menu *m);
+void Menu_run(Menu *m, BG *bg);
 void Menu_refresh_cursor(Menu *m);
 void Menu_hide(Menu *m);
 

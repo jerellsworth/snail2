@@ -14,8 +14,8 @@ int go_to_go_cb(Menu_Item *mi) {
 }
 
 Menu *INTRO_run(Menu *m) {
-
-    bool skip = m != NULL;
+    XGM_startPlay(XGM_MENU);
+    //bool skip = m != NULL;
     PAL_setPalette(PAL0, palette_black, FALSE);
     VDP_drawImage(
         BG_B,
@@ -29,70 +29,34 @@ Menu *INTRO_run(Menu *m) {
     for (u8 i = 0; i < 120; ++i) {
         u16 joy = JOY_readJoypad(JOY_ALL);
         if (joy & BUTTON_ALL) {
-            skip = TRUE;
+            //skip = TRUE;
             break;
         }
         SYS_doVBlankProcess();
     }
     PAL_fadeOut(0, 63, 30, FALSE);
-    XGM_startPlay(XGM_TITLE);
     SYS_doVBlankProcess();
     SYS_doVBlankProcess();
     VDP_clearPlane(BG_B, TRUE);
-    SYS_doVBlankProcess();
-    SYS_doVBlankProcess();
-    VDP_drawImageEx(
-        BG_B,
-        &IMG_HUNTING,
-        TILE_ATTR(PAL0, FALSE, FALSE, FALSE),
-        0,
-        0,
-        FALSE,
-        TRUE
-    );
-    SYS_doVBlankProcess();
-    SYS_doVBlankProcess();
-    SYS_doVBlankProcess();
-    VDP_drawImageEx(
-        BG_A,
-        &IMG_MYTHDRAGON,
-        TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, IMG_HUNTING.tileset->numTile),
-        0,
-        0,
-        FALSE,
-        TRUE
-    );
-    SYS_doVBlankProcess();
-    SYS_doVBlankProcess();
-    SYS_doVBlankProcess();
-    PAL_fadeTo(0, 15, IMG_HUNTING.palette->data, 30, FALSE);
-    if (!skip) {
-        for (u8 i = 0; i < 120; ++i) {
-            u16 joy = JOY_readJoypad(JOY_ALL);
-            if (joy & BUTTON_ALL) {
-                skip = TRUE;
-                break;
-            }
-            SYS_doVBlankProcess();
-        }
-    }
-    PAL_fadeTo(16, 31, IMG_MYTHDRAGON.palette->data, 30, FALSE);
-    if (!skip) {
-        for (u8 i = 0; i < 60; ++i) {
-            u16 joy = JOY_readJoypad(JOY_ALL);
-            if (joy & BUTTON_ALL) {
-                skip = TRUE;
-                break;
-            }
-            SYS_doVBlankProcess();
-        }
-    }
+    BG *bg = BG_init(
+        &MAP_TITLE_BG,
+        &TLS_TITLE_BG,
+        &MAP_TITLE_FG,
+        &TLS_TITLE_FG,
+        &COLLISION_BG,
+        PAL_TITLE.data
+        );
 
-    if (!m) {
+    if (m == NULL) {
         m = Menu_new(19, 24);
         Menu_Item *mi_players = Menu_add_item(m, "Players");
         Menu_Item_add_option(mi_players, "1");
         Menu_Item_add_option(mi_players, "2");
+        if (JOY_getPortType(PORT_2) == PORT_TYPE_EA4WAYPLAY) {
+            Menu_Item_add_option(mi_players, "3");
+            Menu_Item_add_option(mi_players, "4");
+        }
+
         mi_players->select_cb = &go_to_go_cb;
 
         Menu_Item *mi_music = Menu_add_item(m, "Music");
@@ -104,9 +68,7 @@ Menu *INTRO_run(Menu *m) {
         mi_go->select_cb = &go_cb;
     }
 
-    Menu_run(m);
-    XGM_stopPlay();
-    SYS_doVBlankProcess();
-    SYS_doVBlankProcess();
+    Menu_run(m, bg);
+    BG_del(bg);
     return m;
 }

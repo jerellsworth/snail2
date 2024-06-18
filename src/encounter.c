@@ -1,81 +1,52 @@
 #include "bh.h"
 
-void Enc_reset_pc(Enc *e, Player *pl, bool death, u8 iframes) {
-    if (pl->p) {
-        for (int i = 0; i < MAX_PHYSICS_OBJS; ++i) {
-            Physics *p = ALL_PHYSICS_OBJS[i];
-            if (p && p->partner == pl->p) {
-                Physics_del(p, e);
-            }
-        }
-        XGM_startPlayPCM(SND_SAMPLE_PLAYER_HIT, 14, SOUND_PCM_CH4);
-        Physics_del(pl->p, e);
-    }
-    if (death) {
-        --e->lives;
-        if (e->lives == 0) {
-            BG_reset_fx(e->bg);
-            e->state = ENC_COMPLETE;
-            return;
-        }
-        e->bg->degradation += 3;
-    }
-    Phy *hunter;
-    fixx x;
-    const SpriteDefinition *spriteDef;
-    if (pl->player_no == 1) {
-        x = FIXX(32);
-        spriteDef = &SPR_HUNTER;
-    } else {
-        x = FIXX(320 - 32);
-        spriteDef = &SPR_HUNTER2;
-    }
-    hunter = Physics_new_hunter(x, FIXY(64), spriteDef);
-    hunter->pl = pl;
-    hunter->iframes = iframes;
-    if (iframes == 0) {
-        SPR_setPalette(hunter->sp, PAL3);
-    }
-    pl->p = hunter;
-    if (pl->player_no == 1) {
-        e->hunter = hunter;
-    } else {
-        e->hunter2 = hunter;
-    }
-    e->level_frames = 0;
-}
-
-bool Enc_check_position(Enc *e, fixx x, fixy y, u16 w, u16 h) {
-    fixx fix_w = FIXX(w - 1);
-    fixy fix_h = FIXY(h - 1);
-    if (BG_collide(e->bg, x, y, 0, 0, FALSE)) return FALSE;
-    if (BG_collide(e->bg, x + fix_w, y, 0, 0, FALSE)) return FALSE;
-    if (BG_collide(e->bg, x + fix_w, y + fix_h, 0, 0, FALSE)) return FALSE;
-    if (BG_collide(e->bg, x, y + fix_h, 0, 0, FALSE)) return FALSE;
-    return TRUE;
+void Enc_setup_room(Enc *e) {
+    Room *r = Room_new(6, 0, 20);
 }
 
 
 Enc *Enc_new(u8 n_players) {
     Enc *e = ct_calloc(1, sizeof(Encounter));
     e->n_players = n_players;
-    e->state = ENC_RUNNING;
+    e->state = ENC_STARTING;
 
-    //PAL_setPalette(PAL1, PAL_SKULL.data, DMA);
+    PAL_setPalette(PAL0, PAL_BG.data, DMA);
+    PAL_setPalette(PAL1, PAL_SPRITE.data, DMA);
+    PAL_setPalette(PAL2, PAL_PROPS.data, DMA);
+    PAL_setPalette(PAL3, PAL_SPRITE_ALT.data, DMA);
 
     e->bg = BG_init(
+        &MAP_BG,
+        &TLS_BG,
         &MAP_BG,
         &TLS_BG,
         &COLLISION_BG,
         PAL_BG.data
         );
+    e->tm = Tile_Manager_new();
 
-    e->players[0] = Player_new(JOY_1);
-    e->players[0]->player_no = 1;
-    e->players[1] = Player_new(JOY_2);
-    e->players[1]->player_no = 2;
-    e->lives = 5;
-    Enc_load_level(e);
+    u16 joy = JOY_1;
+    for (u8 player_no = 0; player_no < n_players; ++player_no) {
+        if (joy == JOY_2 && JOY_getPortType(PORT_2) == PORT_TYPE_EA4WAYPLAY) ++joy;
+        e->players[player_no] = Player_new(joy);
+        e->players[player_no]->player_no = player_no;
+        ++joy;
+    }
+    for (u8 player_no = n_players; player_no < 4; ++player_no) {
+        e->players[player_no] = Player_new(0);
+        e->players[player_no]->ai_level = 1;
+        e->players[player_no]->player_no = player_no;
+    }
+
+    Enc_setup_room(e);
+    e->seconds_remaining = 60;
+
+    e->countdown = SPR_addSprite(
+            &SPR_COUNTDOWN,
+            128,
+            64,
+            TILE_ATTR(PAL1, TRUE, FALSE, FALSE)
+            );
 
     return e;
 }
@@ -86,9 +57,9 @@ void Enc_del(Enc *e) {
 }
 
 void Enc_cleanup(Enc *e) {
-    u16 white[16];
-    memset(white, 255, 32);
-    PAL_fadeTo(0, 63, white, 60, FALSE);
+    u16 black[16];
+    memset(black, 0, 32);
+    PAL_fadeTo(0, 63, black, 60, FALSE);
     Physics_del_all(e);
     SPR_reset();
     SPR_update();
@@ -97,29 +68,10 @@ void Enc_cleanup(Enc *e) {
 }
 
 void Enc_update(Enc *e) {
-    if (e->music_on && !(e->frames & 15) && !XGM_isPlayingPCM(SOUND_PCM_CH1_MSK)) {
+    if (e->music_on && !(e->frames & 3) && !XGM_isPlaying()) {
         switch (e->song) {
             case 0:
-                if (e->song_frames >= 300) {
-                    XGM_startPlayPCM(SND_SAMPLE_SONG_1, 15, SOUND_PCM_CH1);
-                    e->song = 1;
-                    e->song_frames = 0;
-                }
-                break;
-            case 1:
-                e->song = 2;
-                e->song_frames = 0;
-                break;
-            case 2:
-                if (e->song_frames >= 600) {
-                    XGM_startPlayPCM(SND_SAMPLE_SONG_2, 15, SOUND_PCM_CH1);
-                    e->song = 3;
-                    e->song_frames = 0;
-                }
-                break;
-            case 3:
-                e->song = 0;
-                e->song_frames = 0;
+                XGM_startPlay(XGM_INGAME);
                 break;
             default:
                 break;
@@ -127,67 +79,75 @@ void Enc_update(Enc *e) {
     }
     ++e->song_frames;
     if (e->state == ENC_PAUSED) return;
-    if (e->enemy_counter <= 0) {
-        ++e->level;
-        Enc_load_level(e);
-    }
-    if (e->ms) {
-        MSEG_update(e->ms, e);
-    }
-    if (!(e->frames & 1023) &&  e->lives < 4 && (!(e->ms))) {
-        if (TRUE) {
-            e->ms = MSEG_new(0, FIXY(16 + random_with_max(224 - 16 - 32)));
-            XGM_startPlayPCM(SND_SAMPLE_WORMCALL, 15, SOUND_PCM_CH4);
-        }
-    }
-    if (e->level >= 1 && e->ball_counter == 0 && e->level_frames >= 20 * 60) {
-        Enc_make_ball(e, 1);
-        XGM_startPlayPCM(SND_SAMPLE_BALL, 15, SOUND_PCM_CH4);
-    }
+
     ++e->frames;
     ++e->state_frames;
-    ++e->level_frames;
+
+    if (e->state == ENC_STARTING) {
+        if (e->state_frames == 1 || e->state_frames == 60 || e->state_frames == 120) {
+                XGM_startPlayPCMNextCh(SND_SAMPLE_TICK, 14);
+        } else if (e->state_frames == 180) {
+                XGM_startPlayPCMNextCh(SND_SAMPLE_LAUGH, 14);
+        }
+        if (e->state_frames >= 60 * 4) {
+            e->state = ENC_RUNNING;
+            e->state_frames = 0;
+            SPR_releaseSprite(e->countdown);
+        }
+        return;
+    }
+
+    if (e->frames_remaining > 0) {
+        --e->frames_remaining;
+    } else {
+        if (e->seconds_remaining > 0) {
+            --e->seconds_remaining;
+
+            if (e->seconds_remaining == 0) {
+                XGM_startPlayPCMNextCh(SND_SAMPLE_HORN, 15);
+            } else if (e->seconds_remaining <= 5) {
+                XGM_startPlayPCMNextCh(SND_SAMPLE_TICK, 14);
+            }
+            if (e->seconds_remaining > 2 && Physics_count(WHAT_GOBLIN) <= 1) {
+                e->seconds_remaining = 2;
+            }
+
+            char buf[5];
+            sprintf(buf, "%d", e->seconds_remaining);
+            VDP_clearTextBG(BG_A, 20, 1, 16); 
+            VDP_drawTextBG(BG_A, buf, 20, 1);
+            e->frames_remaining = 60;
+        } else {
+            e->state = ENC_COMPLETE;
+        }
+    }
 }
 
 Enc *Enc_run(Menu *m) {
     Enc *e = Enc_new(m->first->option_selected + 1);
 
     e->music_on = !(m->first->next->option_selected);
-    Player *p1 = e->players[0];
-    Player *p2 = e->players[1];
-    e->hunter->pl = p1;
-    p1->p = e->hunter;
 
-    if (e->n_players > 1) {
-        Player *p2 = e->players[1];
-        e->hunter2->pl = p2;
-        p2->p = e->hunter2;
-    }
-
-    //u32 fps = 60;
-    u8 skipped = 0;
     while (e->state != ENC_COMPLETE) {
         Enc_update(e);
-        Player_input(p1, e);
-        Player_input(p2, e);
+        for (u8 player_no = 0; player_no < 4; ++player_no) {
+            Player_input(e->players[player_no], e);
+        }
         if (e->state != ENC_PAUSED) {
-            Physics_update_all(e);
             BG_update(e->bg);
+            Physics_update_all(e);
         }
-        //VDP_showFPS(FALSE); // TODO dbg
-        //if (fps > 50 || skipped > 0) {
-        if (TRUE) {
-            SPR_update();
-            SYS_doVBlankProcess();
-            skipped = 0;
-        } else {
-            ++skipped;
-        }
-        //fps = SYS_getFPS();
+        SPR_update();
+        SYS_doVBlankProcess();
     }
     Enc_cleanup(e);
     return e;
 }
 
 void Enc_update_score(Enc *e) {
+    // TODO
+    char buf[16];
+    //sprintf(buf, "%d00", e->score);
+    VDP_clearTextBG(BG_A, 20, 1, 16); 
+    VDP_drawTextBG(BG_A, buf, 20, 1);
 }

@@ -14,8 +14,12 @@ s16 Physics_register(Physics *p) {
 }
 
 Physics *Physics_new(
+        Enc *e,
         const SpriteDefinition *spriteDef,
-        u8 pal
+        u8 pal,
+        fixx x,
+        fixy y,
+        bool bg_element
     ) {
     Physics *p = ct_calloc(1, sizeof(Physics));
     p->reg = Physics_register(p);
@@ -24,17 +28,26 @@ Physics *Physics_new(
         return NULL;
     }
     p->uid = random();
-    u16 x = 0;
-    u16 y = 0;
+    p->x = x;
+    p->y = y;
     p->spriteDef = spriteDef;
     p->pal = pal;
-    p->center_offset_x = FIXX(0);
-    p->center_offset_y = FIXY(0);
-    if (p->spriteDef) {
+    p->h = p->spriteDef->h;
+    p->w = p->spriteDef->w;
+    p->center_offset_x = FIXX(p->w) >> 1;
+    p->center_offset_y = FIXY(p->h) >> 1;
+    if (bg_element) {
+        p->bg_element = TRUE;
+        p->bg_tile_idx = SpriteDefinition_VDP_idx(e->tm, spriteDef);
+        p->start_x = x;
+        p->start_y = y;
+        Physics_bg_element_redraw(p, FALSE);
+        p->n_tiles = (p->h >> 3) * (p->w >> 3);
+    } else {
         p->sp = SPR_addSprite(
             spriteDef,
-            x,
-            y,
+            0,
+            0,
             TILE_ATTR(pal, TRUE, FALSE, FALSE)
             );
         if (!p->sp) {
@@ -44,27 +57,21 @@ Physics *Physics_new(
         }
         SPR_setPriority(p->sp, TRUE);
         SPR_setVisibility(p->sp, HIDDEN);
-        p->h = p->spriteDef->h;
-        p->w = p->spriteDef->w;
-        p->center_offset_x = FIXX(p->w) >> 1;
-        p->center_offset_y = FIXY(p->h) >> 1;
     }
-    p->x = FIXX(x);
-    p->y = FIXY(y);
     p->dx = FIX16(0);
     p->dy = FIX16(0);
     p->ddx = FIX16(0);
     p->ddy = FIX16(0);
     p->f = LEFT;
     p->ttl = -1;
-    p->col_x = FIXX(0);
-    p->col_y = FIXY(0);
+    p->col_x = p->x + p->center_offset_x;
+    p->col_y = p->y + p->center_offset_y;
     p->iframes = 0;
     p->grav_model = FALSE;
     p->frames_alive = 0;
-    p->terminal_velocity_up = FIX16(3);
-    p->terminal_velocity_down = FIX16(3);
-    p->get_in_able = TRUE;
+    p->terminal_velocity_up = FIX16(10);
+    p->terminal_velocity_down = FIX16(8);
+    
     return p;
 }
 
@@ -72,8 +79,18 @@ void Physics_del(Physics *p, Enc *e) {
 
     if (p->partner) p->partner->partner = NULL;
     if (p->sp) SPR_releaseSprite(p->sp);
+    if (p->shadow) SPR_releaseSprite(p->shadow);
     if (p->pl) p->pl->p = NULL;
     if (p->instance_counter) --(*p->instance_counter);
+    if (p->bg_element) {
+        VDP_clearTileMapRect(
+            BG_B,
+            fixxToInt(p->start_x) / 8,
+            fixyToInt(p->start_y) / 8,
+            p->spriteDef->w / 8,
+            p->spriteDef->h / 8
+            );
+    }
     ALL_PHYSICS_OBJS[p->reg] = NULL;
     free(p);
 }
@@ -85,21 +102,14 @@ void Physics_del_all(Enc *e) {
     }
 }
 
-void Physics_del_all_thing(Enc *e, Thing t) {
-    for (u8 i = 0; i < MAX_PHYSICS_OBJS; ++i) {
-        Physics *p = ALL_PHYSICS_OBJS[i];
-        if (p && p->what == t) Physics_del(p, e);
-    }
-}
-
-void Physics_update(Encounter *enc, Physics *p) {
+void Physics_update(Encounter *e, Physics *p) {
 
     if (!p) return;
 
-    if (enc->state != ENC_RUNNING) return;
+    if (e->state != ENC_RUNNING) return;
 
     if (p->ttl == 0) {
-        Physics_del(p, enc);
+        Physics_del(p, e);
         return;
     }
 
@@ -114,105 +124,23 @@ void Physics_update(Encounter *enc, Physics *p) {
     ++p->state_frames;
     ++p->frames_alive;
 
-    /*
-    if (!BG_in_range(enc->bg, p)) {
-        if (p->sp) {
-            SPR_setVisibility(p->sp, HIDDEN);
-        }
+    if (p->bg_element) {
+
+        behave(e, p);
         return;
     }
-    */
 
-    if (p->dash_frames > 0) {
-        --p->dash_frames;
-        if (p->dash_frames == 0) {
-            p->dx = p->dx_after_dash;
-            p->dy = p->dy_after_dash;
-        } else {
-            p->dx = p->dash_dx;
-            p->dy = p->dash_dy;
-        }
-    }
-
-    /*
-    if (p->lateral_resistance > 0) {
-        if (p->dx < 0) {
-            p->ddx = p->lateral_resistance;
-        } else if (p->dx > 0) {
-            p->ddx = -p->lateral_resistance;
-        }
-    }
-    */
-
-    /*
-    if (p->grav_model) p->ddy = GRAVITY;
-    if (p->dash_frames) p->ddy = 0;
-    */
+    if (p->grav_model) p->ddz = -GRAVITY;
 
     p->dx += p->ddx;
     p->dy += p->ddy;
+    p->dz += p->ddz;
 
-    /*
-    if (p->grav_model && (!p->dash_frames)) {
-        if (p->dy >= p->terminal_velocity_down) p->dy = p->terminal_velocity_down;
-        if (p->dy <= -p->terminal_velocity_up) p->dy = -p->terminal_velocity_up;
-        if (p->dx <= -p->terminal_velocity_down) p->dx = -p->terminal_velocity_down;
-        if (p->dx >= p->terminal_velocity_down) p->dx = p->terminal_velocity_down;
+    if (p->grav_model) {
+        if (p->dz >= p->terminal_velocity_down) p->dz = p->terminal_velocity_down;
+        if (p->dz <= -p->terminal_velocity_up) p->dz = -p->terminal_velocity_up;
     }
-    */
 
-    if (p->collision && (!p->ignore_walls)) {
-        fixy h = FIXY(p->h);
-        fixx w = FIXX(p->w);
-        p->blocked = FALSE;
-
-        if (p->dy > 0 && BG_collide(enc->bg, p->col_x, p->y + h + p->dy, p->dx, p->dy, FALSE)) {
-            p->blocked = TRUE;
-            if (p->dash_frames > 0) p->dash_frames = 0;
-            if (p->drop_on_collide) {
-                p->dx = 0;
-                p->dy = 0;
-            } else if (p->bouncy) {
-                p->dy = min(-abs(p->dy) + (p->elastic ? 0 : FIXY(2)), 0);
-            } else {
-                p->dy = 0;
-            }
-        } else if (p->dy < 0 && BG_collide(enc->bg, p->col_x, p->y - p->dy, p->dx, p->dy, FALSE)) {
-            p->blocked = TRUE;
-            if (p->dash_frames > 0) p->dash_frames = 0;
-            if (p->drop_on_collide) {
-                p->dx = 0;
-                p->dy = 0;
-            } else if (p->bouncy) {
-                p->dy = max(abs(p->dy) - (p->elastic? 0 : FIXY(2)), 0);
-            } else {
-                p->dy = 0;
-            }
-        }
-        if (p->dx < 0 && BG_collide(enc->bg, p->x - p->dx, p->col_y, p->dx, p->dy, FALSE)) {
-            p->blocked = TRUE;
-            if (p->dash_frames > 0) p->dash_frames = 0;
-            if (p->drop_on_collide) {
-                p->dx = 0;
-                p->dy = 0;
-            } else if (p->bouncy) {
-                p->dx = max(abs(p->dx) - (p->elastic ? 0 :  FIXX(2)), 0);
-            } else {
-                p->dx = 0;
-            }
-        } else if (p->dx > 0 && BG_collide(enc->bg, p->x + w + p->dx, p->col_y, p->dx, p->dy, FALSE)) {
-            p->blocked = TRUE;
-            if (p->dash_frames > 0) p->dash_frames = 0;
-            if (p->drop_on_collide) {
-                p->dx = 0;
-                p->dy = 0;
-            } else if (p->bouncy) {
-                p->dx = min(-abs(p->dx) + (p->elastic ? 0 : FIXX(2)), 0);
-            } else {
-                p->dx = 0;
-            }
-        }
-    }
 
     if (abs(p->dx) < FIX16(0.1)) {
         p->dx = 0;
@@ -220,48 +148,26 @@ void Physics_update(Encounter *enc, Physics *p) {
     
     p->x += fix16ToFixx(p->dx);
     p->y += fix16ToFixy(p->dy);
+    p->z += fix16ToFixz(p->dz);
 
-    behave(enc, p);
+    if (p->collision && (!p->ignore_walls)) {
+        BG_collide(e->bg, p);
+    }
+    p->z = max(p->z, 0);
+
+    behave(e, p);
 
     p->col_x = p->x + p->center_offset_x;
     p->col_y = p->y + p->center_offset_y;
 
-    /*
-    if (p->update_direction) {
-        p->update_direction = FALSE;
-        if (p->theta <= 256) {
-            // upper right quadrant
-            SPR_setHFlip(p->sp, FALSE);
-            SPR_setAnim(p->sp, 4 - (p->theta >> 6));
-        } else if (p->theta <= 768) {
-            // upper left quadrant
-            SPR_setHFlip(p->sp, TRUE);
-            SPR_setAnim(p->sp, (p->theta - 256) >> 6);
-        } else if (p->theta <= 1024) {
-            SPR_setHFlip(p->sp, FALSE);
-            SPR_setAnim(p->sp, 8 - ((p->theta - 768) >> 6));
-        }
-    }
-    */
 
     if (p->sp) {
         SPR_setVisibility(p->sp, VISIBLE);
-        SPR_setPosition(p->sp, fixxToRoundedInt(p->x - BG_x(enc->bg)), fixyToRoundedInt(p->y - BG_y(enc->bg)));
+        SPR_setPosition(p->sp, fixxToRoundedInt(p->x - BG_x(e->bg)), fixyToRoundedInt(p->y - BG_y(e->bg) - p->z));
     }
-}
-
-void Physics_spr_set_position_all(Enc *enc) {
-    for (int i = 0; i < MAX_PHYSICS_OBJS; ++i) {
-        Phy *p = ALL_PHYSICS_OBJS[i];
-        if (!p) continue;
-        if (BG_in_range(enc->bg, p)) {
-            SPR_setVisibility(p->sp, VISIBLE);
-            SPR_setPosition(p->sp, fixyToRoundedInt(p->x - BG_x(enc->bg)), fixyToRoundedInt(p->y - BG_y(enc->bg)));
-            p->col_x = p->x + p->center_offset_x;
-            p->col_y = p->y + p->center_offset_y;
-        } else {
-            SPR_setVisibility(p->sp, HIDDEN);
-        }
+    if (p->shadow) {
+        SPR_setVisibility(p->shadow, VISIBLE);
+        SPR_setPosition(p->shadow, fixxToRoundedInt(p->x - BG_x(e->bg)), fixyToRoundedInt(p->y - BG_y(e->bg)) + p->h - 8);
     }
 }
 
@@ -270,29 +176,33 @@ u32 Physics_dist(Physics *p1, Physics *p2) {
     s16 dy = fixyToRoundedInt(p1->col_y) - fixyToRoundedInt(p2->col_y);
     u32 dist = dx * dx + dy * dy;
 
-    /*
-    char buf[16];
-    sprintf(buf, "%ld", dist);
-    VDP_drawText(buf, 30, 0);
-    */
-
     return dist;
 }
 
-bool collision(Physics *p1, Physics *p2, u32 thresh) {
-    return Physics_dist(p1, p2) <= thresh;
-}
-
 bool collision_box(Phy *p1, Phy *p2) {
-    fixx p1x = p1->x + fix16ToFixx(p1->dx);
-    fixx p2x = p2->x + fix16ToFixx(p2->dx);
-    fixy p1y = p1->y + fix16ToFixy(p1->dy);
-    fixy p2y = p2->y + fix16ToFixy(p2->dy);
+    fixx p1x = p1->x + fix16ToFixx(p1->dx) + p1->hbox_offset_x;
+    fixx p2x = p2->x + fix16ToFixx(p2->dx) + p2->hbox_offset_x;
+    fixy p1y = p1->y + fix16ToFixy(p1->dy) + p1->hbox_offset_y;
+    fixy p2y = p2->y + fix16ToFixy(p2->dy) + p2->hbox_offset_y;
     return (
         p1x < p2x + FIXX(p2->w) &&
-        p1x + FIXX(p1->w) > p2->x &&
+        p1x + FIXX(p1->w) > p2x &&
         p1y < p2y + FIXY(p2->h) &&
-        p1y + FIXY(p1->h) > p2->y
+        p1y + FIXY(p1->h) > p2y &&
+        abs(p1->z - p2->z) < FIXZ(8)
+        );
+}
+
+bool collision_box_visual(Phy *p1, Phy *p2) {
+    fixx p1x = p1->x;
+    fixx p2x = p2->x;
+    fixy p1y = p1->y;
+    fixy p2y = p2->y;
+    return (
+        p1x < p2x + FIXX(p2->spriteDef->w) &&
+        p1x + FIXX(p1->spriteDef->w) > p2x &&
+        p1y < p2y + FIXY(p2->spriteDef->h) &&
+        p1y + FIXY(p1->spriteDef->h) > p2y
         );
 }
 
@@ -303,8 +213,9 @@ void Physics_update_all(Encounter *enc) {
 
     if (enc->state != ENC_RUNNING) return;
 
+    fixx interval = FIX16(90);
     fixx xmin = FIXX(0);
-    fixx xmax = FIXX(40);
+    fixx xmax = interval;
     while (xmin < FIXX(320)) {
         Phy *phys_in_range[MAX_PHYSICS_OBJS];
         u8 n_phys_in_range = 0;
@@ -315,15 +226,15 @@ void Physics_update_all(Encounter *enc) {
             if (!p->collision) continue;
             if (p->iframes > 0) continue;
             if (p->x < xmin || p->x >= xmax) continue;
-            //if (!BG_in_range(enc->bg, p)) continue;
             phys_in_range[n_phys_in_range] = p;
             ++n_phys_in_range;
         }
-        for (u8 i = 0; i < n_phys_in_range - 1; ++i) {
+        for (u8 i = 0; i < n_phys_in_range; ++i) {
             Phy *pi = phys_in_range[i];
-            for (u8 j = i + 1; j < n_phys_in_range; ++j) {
+            if (!pi->calc_collisions) continue;
+            for (u8 j = 0; j < n_phys_in_range; ++j) {
+                if (i == j) continue;
                 Phy *pj = phys_in_range[j];
-                if (!(pi->calc_collisions || pj->calc_collisions)) continue;
                 if (!collision_box(pi, pj)) continue;
 
                 if (interact(enc, pi, pj)) continue;
@@ -369,34 +280,52 @@ void Physics_update_all(Encounter *enc) {
                         pj->dy = -pj->dy;
                     }
                 }
-
-                if (pi->dash_frames) {
-                    pi->dash_dx = pi->dx;
-                    pi->dash_dy = pi->dy;
-                }
-                if (pj->dash_frames) {
-                    pj->dash_dx = pj->dx;
-                    pj->dash_dy = pj->dy;
-                }
             }
         }
-        xmin = xmax;
-        xmax += FIXX(40);
+        xmin = xmax - FIXX(16);
+        xmax = xmin + interval;
     }
 }
 
-void Physics_direction_to(Physics *from, Physics *to, fix16 *norm_x, fix16 *norm_y, u16 *theta) {
-    fix16 dx = fixxToFix16(to->x - from->x);
-    fix16 dy = fixyToFix16(to->y - from->y);
-
-    normalize(dx, dy, FIX16(1), norm_x, norm_y);
-
-    *theta = arccossin(*norm_x, *norm_y);
+void Physics_bg_element_redraw(Physics *p, bool hflip) {
+    if (!p->bg_element) return;
+    VDP_fillTileMapRectIncT(
+        BG_B,
+        TILE_ATTR_FULL(p->pal, TRUE, FALSE, hflip, p->bg_tile_idx + p->anim_no * p->n_tiles),
+        fixxToInt(p->start_x) / 8,
+        fixyToInt(p->start_y) / 8,
+        p->spriteDef->w / 8,
+        p->spriteDef->h / 8
+        );
 }
 
-void Physics_set_visibility_all(Thing t, u16 newVisibility) {
+Phy *Physics_collides_with_anything(Phy *p) {
     for (int i = 0; i < MAX_PHYSICS_OBJS; ++i) {
-        Physics *p = ALL_PHYSICS_OBJS[i];
-        if (p && (p->what & t)) SPR_setVisibility(p->sp, newVisibility);
+        Phy *p2 = ALL_PHYSICS_OBJS[i];
+        if (p2 == NULL) continue;
+        if (p == p2) continue;
+        if (!(p2->collision)) continue;
+        if (collision_box(p, p2)) return p2;
     }
+    return NULL;
+}
+
+Phy *Physics_collides_with_anything_visual(Phy *p) {
+    for (int i = 0; i < MAX_PHYSICS_OBJS; ++i) {
+        Phy *p2 = ALL_PHYSICS_OBJS[i];
+        if (p2 == NULL) continue;
+        if (p == p2) continue;
+        if (collision_box_visual(p, p2)) return p2;
+    }
+    return NULL;
+}
+
+u8 Physics_count(Thing t) {
+    u8 ret = 0;
+    for (int i = 0; i < MAX_PHYSICS_OBJS; ++i) {
+        Phy *p = ALL_PHYSICS_OBJS[i];
+        if (p == NULL) continue;
+        if (p->what == t) ++ret;
+    }
+    return ret;
 }

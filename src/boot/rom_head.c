@@ -10,8 +10,8 @@ const ROMHeader rom_header = {
     "SEGA MEGA DRIVE ",
 #endif
     "(C)STOAT 2024   ",
-    "SNAIL MAZE 2                                    ",
-    "SNAIL MAZE 2                                    ",
+    "GOBLIN COFFEE BREAK                             ",
+    "GOBLIN COFFEE BREAK                             ",
     "GM 00000000-00",
     0x000,
     "JD              ",
@@ -28,6 +28,6 @@ const ROMHeader rom_header = {
     0x00200000,
     0x0020FFFF,
     "            ",
-    "SNAIL MAZE 2                            ",
+    "GOBLIN COFFEE BREAK                     ",
     "JUE             "
 };

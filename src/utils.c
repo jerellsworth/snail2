@@ -143,6 +143,15 @@ u16 intsqrt(s16 x) {
     return m_plus_1;
 }
 
+u16 bigintsqrt(u32 x) {
+    // https://math.stackexchange.com/a/2469481
+    if (x < 2) return x;
+    u32 m = 2 * bigintsqrt(x >> 2);
+    u32 m_plus_1 = m + 1;
+    if (m_plus_1 * m_plus_1 > x) return m;
+    return (u16) m_plus_1;
+}
+
 int dbgLine = 8;
 
 void fix32print(char *label, fix32 x) {
@@ -227,4 +236,25 @@ char *heap_str(char *str) {
     char *new = ct_calloc(sizeof(char), strlen(str) + 1);
     strcpy(new, str);
     return new;
+}
+
+void SPR_ensureAnim(Sprite* sprite, s16 anim) {
+    if (sprite->animInd == anim) return;
+    SPR_setAnim(sprite, anim);
+}
+
+void VDP_fillTileMapRectIncT(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, u16 h) {
+    for (u8 thisx = x; thisx < x + w; ++thisx) {
+        VDP_fillTileMapRectInc(plane, basetile, thisx, y, 1, h);
+        basetile += h;
+    }
+}
+
+u16 next_pcm_channel = SOUND_PCM_CH2;
+
+u16 XGM_startPlayPCMNextCh(const u8 id, const u8 priority) {
+    u16 ch = next_pcm_channel;
+    XGM_startPlayPCM(id, priority, ch);
+    next_pcm_channel = next_pcm_channel == SOUND_PCM_CH4 ? SOUND_PCM_CH2 : next_pcm_channel + 1;
+    return ch;
 }
