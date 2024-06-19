@@ -1,1 +1,2 @@
-Try maze walls as bg-bound physics objects rather than making them a special case
+Maze needs more walls
+pacman-ce-like movement

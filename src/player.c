@@ -36,6 +36,22 @@ void Player_input(Player *pl, Enc *e) {
             return;
         }
         switch (p->what) {
+            case WHAT_SNAIL:
+                p->dx = 0;
+                p->dy = 0;
+                if (joy & BUTTON_UP) {
+                    p->dy = FIXY(-2);
+                } else if (joy & BUTTON_DOWN) {
+                    p->dy = FIXY(2);
+                }
+                if (joy & BUTTON_LEFT) {
+                    p->dx = FIXX(-2);
+                    SPR_setHFlip(p->sp, TRUE);
+                } else if (joy & BUTTON_RIGHT) {
+                    p->dx = FIXX(2);
+                    SPR_setHFlip(p->sp, FALSE);
+                }
+                return;
             default:
                 return;
         }

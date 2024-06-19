@@ -50,8 +50,12 @@ Enc *Enc_new(u8 n_players) {
     */
 
     Enc_setup_room(e);
-    e->seconds_remaining = 60;
 
+    Phy *snail = Physics_new_snail(e, FIXX(8), FIXY(200));
+    snail->pl = e->players[0];
+    e->players[0]->p = snail;
+
+    e->seconds_remaining = 60;
 
     return e;
 }

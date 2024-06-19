@@ -3,7 +3,7 @@
 
 #define ROOM_W 9
 #define ROOM_H 8
-#define ROOM_MAX_WALLS 31
+#define ROOM_MAX_WALLS 96
 
 #include "bh.h"
 

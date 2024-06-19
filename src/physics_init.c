@@ -14,3 +14,18 @@ Phy *Physics_new_wall(Enc *e, fixx x, fixy y, bool is_horizontal) {
     p->calc_collisions = FALSE;
     return p;
 }
+
+Phy *Physics_new_snail(Enc *e, fixx x, fixy y) {
+    Phy *p = Physics_new(
+        e,
+        &SPR_SNAIL,
+        PAL2,
+        x,
+        y,
+        FALSE
+    );
+    if (!p) return NULL;
+    p->collision = TRUE;
+    p->calc_collisions = TRUE;
+    return p;
+}
