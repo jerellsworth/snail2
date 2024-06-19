@@ -16,10 +16,12 @@ void Player_del(Player *p) {
 void Player_input(Player *pl, Enc *e) {
     Phy *p = pl->p;
     if (!p) return;
+    /*
     if (pl->ai_level > 0) {
         ai(pl, e);
         return;
     }
+    */
     u16 joy = JOY_readJoypad(pl->joy);
     if (pl->cooldown > 0) --pl->cooldown;
     if (pl->cooldown2> 0) --pl->cooldown2;

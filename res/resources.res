@@ -4,12 +4,16 @@ IMAGE IMG_FG "images/fg.png"
 TILESET TLS_BG "images/bg.png"
 TILESET TLS_FG "images/fg.png"
 TILESET TLS_FG_DYNAMIC "tiles/fg.png" 0 0
+TILESET TLS_TITLE_FG "images/bg.png"
+TILESET TLS_TITLE_BG "images/bg.png"
 MAP MAP_BG "images/bg.png" TLS_BG
-MAP MAP_BG_BEACH "images/bg_beach.png" TLS_BG_BEACH
-MAP MAP_BG_CASTLE "images/bg_castle.png" TLS_BG_CASTLE
-MAP MAP_BG_STATIC "images/bg_static.png" TLS_BG_STATIC
+MAP MAP_FG "images/fg.png" TLS_FG
+MAP MAP_TITLE_FG "images/bg.png" TLS_TITLE_FG
+MAP MAP_TITLE_BG "images/bg.png" TLS_TITLE_BG
 PALETTE PAL_BG "images/bg.png"
 PALETTE PAL_FG "images/fg.png"
+PALETTE PAL_TITLE "images/bg.png"
 PALETTE PAL_SPRITE1 "sprites/snail.png"
-SPRITE SPR_SNAIL "sprites/snail.png" 3 2
+SPRITE SPR_SNAIL "sprites/snail.png" 3 2 0 15
+SPRITE SPR_CURSOR "sprites/cursor.png" 1 1
 XGM XGM_INGAME "songs/E3M6 Myrgharok - On a Sea of Lava.vgm"

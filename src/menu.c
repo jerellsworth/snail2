@@ -89,7 +89,7 @@ void Menu_input(Menu *m) {
 }
 
 void Menu_run(Menu *m, BG *bg) {
-    PAL_setPalette(PAL1, PAL_SPRITE.data, FALSE);
+    PAL_setPalette(PAL1, PAL_SPRITE1.data, FALSE);
     m->spr_cursor = SPR_addSprite(
             &SPR_CURSOR,
             m->x,

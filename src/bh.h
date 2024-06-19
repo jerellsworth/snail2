@@ -6,12 +6,6 @@
 #define MAX_N_PLAYERS 4
 #define COLLISION_THRESH 512
 
-#define SIN_PI_DIV_3 FIX16(0.866)
-#define COS_PI_DIV_3 FIX16(0.5)
-// log2(Gravity/sin(2*pi/3))/2
-#define VELOCITY_COEF FIX16(-0.39624)
-
-
 #define MAP_TILES_W 40
 #define MAP_TILES_H 28
 
@@ -70,7 +64,7 @@ typedef int (*Menu_Select_CB)(Menu_Item *);
 typedef struct Score_s Score;
 
 typedef struct Room_Cell_s Room_Cell;
-typedef struct Room_s Room_Cell;
+typedef struct Room_s Room;
 
 #include <genesis.h>
 #include <maths.h>
