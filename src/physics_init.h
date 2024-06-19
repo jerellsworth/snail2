@@ -4,9 +4,12 @@
 #include "bh.h"
 
 enum Thing_e {
-    WHAT_PROP, // NOTE: PROP should always be first
+    WHAT_PROP,
     WHAT_PARTICLE,
+    WHAT_WALL,
     WHAT_SNAIL
 };
+
+Phy *Physics_new_wall(Enc *e, fixx x, fixy y, bool is_horizontal);
 
 #endif

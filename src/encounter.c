@@ -1,9 +1,19 @@
 #include "bh.h"
 
 void Enc_setup_room(Enc *e) {
-    Room *r = Room_new(6, 0, 20);
+    Room *room = Room_new(6, 0, 20);
+    for (u8 r = 0; r < ROOM_H; ++r) {
+        for (u8 c = 0; c < ROOM_W - 1; ++c) {
+            Room_Cell *rc = room->cells[r][c];
+            if (r < (ROOM_H - 1) && *(rc->down_wall)) {
+                Physics_new_wall(e, FIXX(8 + c * 32), FIXY(r * 24), TRUE);
+            }
+            if (*(rc->right_wall)) {
+                Physics_new_wall(e, FIXX(c * 32), FIXY(8 + r * 24), FALSE);
+            }
+        }
+    }
 }
-
 
 Enc *Enc_new(u8 n_players) {
     Enc *e = ct_calloc(1, sizeof(Encounter));
