@@ -14,7 +14,7 @@ int go_to_go_cb(Menu_Item *mi) {
 }
 
 Menu *INTRO_run(Menu *m) {
-    XGM_startPlay(XGM_MENU);
+    //XGM_startPlay(XGM_MENU);
     //bool skip = m != NULL;
     PAL_setPalette(PAL0, palette_black, FALSE);
     VDP_drawImage(

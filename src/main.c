@@ -7,7 +7,8 @@ void wait(u8 frames) {
     }
 }
 
-void results(Score **scores, u8 round) {
+void results(Enc *e) {
+    /*
     VDP_init();
 
     PAL_setPalette(PAL1, PAL_SPRITE.data, DMA);
@@ -78,6 +79,7 @@ void results(Score **scores, u8 round) {
     }
     JOY_waitPressBtn();
     PAL_fadeTo(63, 63, &black, 30, FALSE);
+    */
     SPR_init();
     VDP_init();
 }
@@ -93,22 +95,16 @@ int main(bool hard_reset) {
     while (TRUE) {
         m = INTRO_run(m);
 
+        /*
         Score *scores[4];
         for (u8 i = 0; i < 4; ++i) scores[i] = Score_new(i);
+        */
         XGM_stopPlay();
 
-        for(u8 round = 0; round < 3; ++ round) {
-            Enc *e = Enc_run(m);
+        Enc *e = Enc_run(m);
 
-            for (u8 pl_no = 0; pl_no < 4; ++pl_no) {
-                Player *pl = e->players[pl_no];
-                Score *s = scores[pl_no];
-                Score_tally(s, pl);
-            }
-
-            results(scores, round);
-            Enc_del(e);
-        }
+        results(e);
+        Enc_del(e);
     }
 	return 0;
 }

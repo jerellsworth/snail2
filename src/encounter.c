@@ -11,9 +11,8 @@ Enc *Enc_new(u8 n_players) {
     e->state = ENC_STARTING;
 
     PAL_setPalette(PAL0, PAL_BG.data, DMA);
-    PAL_setPalette(PAL1, PAL_SPRITE.data, DMA);
-    PAL_setPalette(PAL2, PAL_PROPS.data, DMA);
-    PAL_setPalette(PAL3, PAL_SPRITE_ALT.data, DMA);
+    PAL_setPalette(PAL1, PAL_FG.data, DMA);
+    PAL_setPalette(PAL2, PAL_SPRITE1.data, DMA);
 
     e->bg = BG_init(
         &MAP_BG,
@@ -32,21 +31,17 @@ Enc *Enc_new(u8 n_players) {
         e->players[player_no]->player_no = player_no;
         ++joy;
     }
+    /*
     for (u8 player_no = n_players; player_no < 4; ++player_no) {
         e->players[player_no] = Player_new(0);
         e->players[player_no]->ai_level = 1;
         e->players[player_no]->player_no = player_no;
     }
+    */
 
     Enc_setup_room(e);
     e->seconds_remaining = 60;
 
-    e->countdown = SPR_addSprite(
-            &SPR_COUNTDOWN,
-            128,
-            64,
-            TILE_ATTR(PAL1, TRUE, FALSE, FALSE)
-            );
 
     return e;
 }
@@ -71,7 +66,8 @@ void Enc_update(Enc *e) {
     if (e->music_on && !(e->frames & 3) && !XGM_isPlaying()) {
         switch (e->song) {
             case 0:
-                XGM_startPlay(XGM_INGAME);
+                // TODO
+                //XGM_startPlay(XGM_INGAME);
                 break;
             default:
                 break;
@@ -84,6 +80,7 @@ void Enc_update(Enc *e) {
     ++e->state_frames;
 
     if (e->state == ENC_STARTING) {
+        /*
         if (e->state_frames == 1 || e->state_frames == 60 || e->state_frames == 120) {
                 XGM_startPlayPCMNextCh(SND_SAMPLE_TICK, 14);
         } else if (e->state_frames == 180) {
@@ -94,9 +91,11 @@ void Enc_update(Enc *e) {
             e->state_frames = 0;
             SPR_releaseSprite(e->countdown);
         }
+        */
         return;
     }
 
+    /*
     if (e->frames_remaining > 0) {
         --e->frames_remaining;
     } else {
@@ -121,6 +120,7 @@ void Enc_update(Enc *e) {
             e->state = ENC_COMPLETE;
         }
     }
+    */
 }
 
 Enc *Enc_run(Menu *m) {
