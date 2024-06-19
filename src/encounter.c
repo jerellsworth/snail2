@@ -27,8 +27,8 @@ Enc *Enc_new(u8 n_players) {
     e->bg = BG_init(
         &MAP_BG,
         &TLS_BG,
-        &MAP_BG,
-        &TLS_BG,
+        &MAP_FG,
+        &TLS_FG,
         &COLLISION_BG,
         PAL_BG.data
         );

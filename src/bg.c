@@ -46,7 +46,7 @@ void BG_change_map(
     bg->fg_tile_ind = bg->tile_ind;
     VDP_loadTileSet(tileset_fg, bg->fg_tile_ind, DMA);
     bg->tile_ind += tileset_bg->numTile;
-    bg->map_fg = MAP_create(mapDef_fg, BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, bg->fg_tile_ind));
+    bg->map_fg = MAP_create(mapDef_fg, BG_A, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, bg->fg_tile_ind));
     MAP_scrollTo(bg->map_fg, 0, 0);
     VDP_setScrollingMode(HSCROLL_LINE, VSCROLL_COLUMN);
 
