@@ -3,10 +3,23 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "bg.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
+        "bg.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 34.833333333333336,
+                "y": 121.66666666666666
+            }
+        },
+        "oga-swm-tiles-alpha.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 4
+        }
     },
     "last.imagePath": "/Users/zacharyrubenstein/stoat/snail2/res_raw",
     "map.height": 28,
@@ -15,9 +28,13 @@
     "map.tileWidth": 8,
     "map.width": 40,
     "openFiles": [
+        "oga-swm-tiles-alpha.tsx",
+        "bg.tmx"
     ],
     "project": "snail.tiled-project",
     "recentFiles": [
+        "oga-swm-tiles-alpha.tsx",
+        "bg.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

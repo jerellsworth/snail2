@@ -25,6 +25,7 @@ Phy *Physics_new_snail(Enc *e, fixx x, fixy y) {
         FALSE
     );
     if (!p) return NULL;
+    p->what = WHAT_SNAIL;
     p->collision = TRUE;
     p->calc_collisions = TRUE;
     return p;

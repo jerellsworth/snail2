@@ -106,6 +106,7 @@ void Enc_update(Enc *e) {
             SPR_releaseSprite(e->countdown);
         }
         */
+        e->state = ENC_RUNNING;
         return;
     }
 
