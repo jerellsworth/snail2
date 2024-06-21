@@ -1,45 +1,63 @@
 #include "bh.h"
 
-bool snail_would_collide(Phy *p1) {
-    fixx p1x = p1->x + p1->buffer_dx;
-    fixy p1y = p1->y + p1->buffer_dy;
-    if (p1x < FIXX(8)) return FALSE;
-    if (p1x > FIXX(264)) return FALSE;
-    if (p1y < FIXY(8)) return FALSE;
-    if (p1y > FIXY(200)) return FALSE;
-    for (int i = 0; i < MAX_PHYSICS_OBJS; ++i) {
-        Phy *p2 = ALL_PHYSICS_OBJS[i];
-        if (p2 == NULL) continue;
-        if (p2->what != WHAT_WALL) continue;
-        fixx p2x = p2->x;
-        fixx p2y = p2->y;
-        if (p1x < p2x + FIXX(p2->spriteDef->w) &&
-            p1x + FIXX(p1->spriteDef->w) > p2x &&
-            p1y < p2y + FIXY(p2->spriteDef->h) &&
-            p1y + FIXY(p1->spriteDef->h) > p2y) {
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-
 void behave(Encounter *e, Physics *p) {
     switch (p->what) {
         case WHAT_SNAIL:
+            fixx xoffset = p->x - FIXX(8);
+            fixy yoffset = p->y - FIXY(8);
             if (
-                ((p->x - FIXX(8)) % FIXX(32) == 0) &&
-                ((p->y - FIXY(8)) % FIXY(24) == 0)
+                (xoffset % FIXX(32) == 0) &&
+                (yoffset % FIXY(24) == 0)
             ) {
                 if ((p->buffer_dx != 0) || (p->buffer_dy != 0)) {
-                    if (!snail_would_collide(p)) {
+                    if (xoffset < 0) return;
+                    if (yoffset < 0) return;
+
+                    u8 r = fix16ToInt(xoffset) / 32;
+                    u8 c = fix16ToInt(yoffset) / 24;
+
+                    if (r >= ROOM_H) return;
+                    if (c >= ROOM_W) return;
+                    
+                    Room_Cell *rc = e->room->cells[r][c];
+                    if (
+                        (p->dx > 0) &&
+                        (c < ROOM_W - 1) &&
+                        !(*(rc->right_wall))
+                        ) {
                         p->dx = p->buffer_dx;
-                        p->dy = p->buffer_dy;
                         p->buffer_dx = 0;
+                        return;
+                    } 
+                    if (
+                        (p->dx < 0) &&
+                        (c > 0) &&
+                        !(*(rc->left_wall))
+                        ) {
+                        p->dx = p->buffer_dx;
+                        p->buffer_dx = 0;
+                        return;
+                    } 
+                    if (
+                        (p->dy > 0) &&
+                        (r < ROOM_H - 1) &&
+                        !(*(rc->down_wall))
+                        ) {
+                        p->dy = p->buffer_dy;
+                        p->buffer_dy = 0;
+                        return;
+                    } 
+                    if (
+                        (p->dy < 0) &&
+                        (r > 0) &&
+                        !(*(rc->up_wall))
+                        ) {
+                        p->dy = p->buffer_dy;
                         p->buffer_dy = 0;
                     }
                 }
             }
-            break;
+            return;
         default:
             return;
     }

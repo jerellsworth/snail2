@@ -32,6 +32,8 @@ struct Encounter_s{
     bool music_on;
 
     Sprite *countdown;
+
+    Room *room;
 };
 
 Enc *Enc_new(u8 n_players);

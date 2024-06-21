@@ -13,6 +13,7 @@ void Enc_setup_room(Enc *e) {
             }
         }
     }
+    e->room = room;
 }
 
 Enc *Enc_new(u8 n_players) {
