@@ -73,13 +73,9 @@ struct Physics_s {
     fix16 dx_after_dash, dy_after_dash;
 
     bool blocked;
-    u8 charged;
-    s16 english;
 
-    bool ai_flag;
-    fix16 pending_throw_dx;
-    fix16 pending_throw_dy;
-    fix16 pending_throw_dz;
+    fix16 buffer_dx;
+    fix16 buffer_dy;
 
     // TODO dbg
     Sprite *cursor;

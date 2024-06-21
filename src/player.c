@@ -37,18 +37,20 @@ void Player_input(Player *pl, Enc *e) {
         }
         switch (p->what) {
             case WHAT_SNAIL:
-                p->dx = 0;
-                p->dy = 0;
                 if (joy & BUTTON_UP) {
-                    p->dy = FIXY(-2);
+                    p->buffer_dy = FIXY(-2);
+                    p->buffer_dx = 0;
                 } else if (joy & BUTTON_DOWN) {
-                    p->dy = FIXY(2);
-                }
-                if (joy & BUTTON_LEFT) {
-                    p->dx = FIXX(-2);
+                    p->buffer_dy = FIXY(2);
+                    p->buffer_dx = 0;
+                } else if (joy & BUTTON_LEFT) {
+                    p->buffer_dx = FIXX(-2);
+                    p->buffer_dy = 0;
                     SPR_setHFlip(p->sp, TRUE);
                 } else if (joy & BUTTON_RIGHT) {
-                    p->dx = FIXX(2);
+                    p->buffer_dx = FIXX(2);
+                    p->buffer_dy = 0;
+                    // TODO sparks
                     SPR_setHFlip(p->sp, FALSE);
                 }
                 return;

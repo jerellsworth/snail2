@@ -108,13 +108,13 @@ bool BG_collide(BG *bg, Phy *p) {
         p->x = FIXX(8) - p->hbox_offset_x;
         if (p->elastic) p->dx = -(p->dx >> 1);
         ret = TRUE;
-    } else if (px + FIXX(p->w) > FIXX(312)) {
-        p->x = FIXX(312) - FIXX(p->w) - p->hbox_offset_x;
+    } else if (px + FIXX(p->w) > FIXX(288)) {
+        p->x = FIXX(288) - FIXX(p->w) - p->hbox_offset_x;
         if (p->elastic) p->dx = -(p->dx >> 1);
         ret = TRUE;
     }
-    if (py < FIXY(16)) {
-        p->y = FIXY(16) - p->hbox_offset_y;
+    if (py < FIXY(8)) {
+        p->y = FIXY(8) - p->hbox_offset_y;
         if (p->elastic) p->dy = -(p->dy >> 1);
         ret = TRUE;
     } else if (py + FIXY(p->h) > FIXY(216)) {
