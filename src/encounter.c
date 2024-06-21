@@ -1,7 +1,7 @@
 #include "bh.h"
 
 void Enc_setup_room(Enc *e) {
-    Room *room = Room_new(6, 0, 20);
+    Room *room = Room_new(6, 0, 25);
     for (u8 r = 0; r < ROOM_H; ++r) {
         for (u8 c = 0; c < ROOM_W - 1; ++c) {
             Room_Cell *rc = room->cells[r][c];
