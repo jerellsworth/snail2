@@ -6,6 +6,7 @@ TILESET TLS_FG "images/fg.png"
 TILESET TLS_FG_DYNAMIC "tiles/fg.png" 0 0
 TILESET TLS_TITLE_FG "images/bg.png"
 TILESET TLS_TITLE_BG "images/bg.png"
+TILESET TLS_METER "tiles/meter.png" 0 0
 MAP MAP_BG "images/bg.png" TLS_BG
 MAP MAP_FG "images/fg.png" TLS_FG
 MAP MAP_TITLE_FG "images/bg.png" TLS_TITLE_FG

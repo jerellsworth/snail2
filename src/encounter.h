@@ -34,6 +34,8 @@ struct Encounter_s{
     Sprite *countdown;
 
     Room *room;
+
+    u16 meter_tile_ind;
 };
 
 Enc *Enc_new(u8 n_players);

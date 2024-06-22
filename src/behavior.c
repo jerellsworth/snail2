@@ -88,11 +88,11 @@ void behave(Encounter *e, Physics *p) {
                 if (p->buffer_dx < 0 && *(rc->left_wall)) {
                     Physics_new_slime(e, p->x, p->col_y, LEFT);
                 } else if (p->buffer_dx > 0 && *(rc->right_wall)) {
-                    Physics_new_slime(e, p->x + FIXX(p->w), p->col_y, RIGHT);
+                    Physics_new_slime(e, p->x + FIXX(p->w) - FIXX(8), p->col_y, RIGHT);
                 } else if (p->buffer_dy < 0 && *(rc->up_wall)) {
                     Physics_new_slime(e, p->col_x, p->y, UP);
                 } else if (p->buffer_dy > 0 && *(rc->down_wall)) {
-                    Physics_new_slime(e, p->col_x, p->y + FIXY(p->h), DOWN);
+                    Physics_new_slime(e, p->col_x, p->y + FIXY(p->h) - FIXY(8), DOWN);
                 }
             }
             return;

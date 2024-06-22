@@ -14,6 +14,26 @@ void Enc_setup_room(Enc *e) {
         }
     }
     e->room = room;
+    VDP_setTileMapXY(
+        BG_A,
+        TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, e->meter_tile_ind + 9),
+        38,
+        9
+        );
+    VDP_fillTileMapRect(
+        BG_A,
+        TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, e->meter_tile_ind + 8),
+        38, 
+        10,
+        1, 
+        16
+        );    
+    VDP_setTileMapXY(
+        BG_A,
+        TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, e->meter_tile_ind + 10),
+        38,
+        26 
+        );
 }
 
 Enc *Enc_new(u8 n_players) {
@@ -33,6 +53,9 @@ Enc *Enc_new(u8 n_players) {
         &COLLISION_BG,
         PAL_BG.data
         );
+    e->meter_tile_ind = 0x3C0; // I dunno seems empty
+    VDP_loadTileSet(&TLS_METER, e->meter_tile_ind, DMA);
+
     e->tm = Tile_Manager_new();
 
     u16 joy = JOY_1;
