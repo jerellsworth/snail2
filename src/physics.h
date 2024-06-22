@@ -3,13 +3,6 @@
 
 #include "bh.h"
 
-typedef enum {
-    DOWN,
-    LEFT,
-    RIGHT,
-    UP
-} Facing;
-
 struct Physics_s {
     const SpriteDefinition *spriteDef;
     u16 uid; // TODO not really unique, just distributed

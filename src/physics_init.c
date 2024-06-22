@@ -33,7 +33,7 @@ Phy *Physics_new_snail(Enc *e, fixx x, fixy y) {
 }
 
 Phy *Physics_new_slime(Enc *e, fixx x, fixy y, Facing f) {
-    const SpriteDefinition *spr_def,
+    const SpriteDefinition *spr_def;
     if (f == LEFT || f == RIGHT) {
         spr_def = &SPR_VSLIME;
     } else {
@@ -41,7 +41,7 @@ Phy *Physics_new_slime(Enc *e, fixx x, fixy y, Facing f) {
     }
     Phy *p = Physics_new(
         e,
-        &SPR_SNAIL,
+        spr_def,
         PAL2,
         x,
         y,

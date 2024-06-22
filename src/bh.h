@@ -66,6 +66,14 @@ typedef struct Score_s Score;
 typedef struct Room_Cell_s Room_Cell;
 typedef struct Room_s Room;
 
+typedef enum {
+    DOWN,
+    LEFT,
+    RIGHT,
+    UP
+} Facing;
+
+
 #include <genesis.h>
 #include <maths.h>
 #include <memory.h>

@@ -81,6 +81,17 @@ void behave(Encounter *e, Physics *p) {
                     }
                 }
             }
+            if (!(e->frames & 7)) {
+                if (p->buffer_dx < 0) {
+                    Physics_new_slime(e, p->x, p->col_y, LEFT);
+                } else if (p->buffer_dx > 0) {
+                    Physics_new_slime(e, p->x + FIXX(p->w), p->col_y, RIGHT);
+                } else if (p->buffer_dy < 0) {
+                    Physics_new_slime(e, p->col_x, p->y, UP);
+                } else if (p->buffer_dy > 0) {
+                    Physics_new_slime(e, p->col_x, p->y + FIXY(p->h), DOWN);
+                }
+            }
             return;
         default:
             return;
