@@ -25,7 +25,8 @@ void behave(Encounter *e, Physics *p) {
                     VDP_drawText(buf, 1, 2);
                     
                     Room_Cell *rc = e->room->cells[r][c];
-                    sprintf(buf, "%d,%d,%d,%d", *(rc->right_wall), *(rc->left_wall), *(rc->down_wall), *(rc->up_wall));
+                    sprintf(buf, "r:%d,l:%d,d:%d,u:%d", *(rc->right_wall), *(rc->left_wall), *(rc->down_wall), *(rc->up_wall));
+                    VDP_drawText(buf, 1, 3);
                     // TODO the wall checks are innacurate
                     if (
                         (p->buffer_dx > 0) &&
