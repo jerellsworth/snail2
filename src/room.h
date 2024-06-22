@@ -28,6 +28,7 @@ struct Room_Cell_s {
     u8 region;
     bool in_maze;
     bool in_frontier;
+    bool marked;
 };
 
 typedef struct _Set_s {

@@ -57,16 +57,24 @@ bool _Room_partitioned(Room *r) {
     return FALSE;
 }
 
-void _prims_add_to_maze(Room_Cell *c, _Set *frontier) {
+void _prims_add_to_maze(Room_Cell *c, _Set *frontier, bool first) {
     c->in_maze = TRUE;
-    if ((c->up) && (c->up->in_maze)) {
-        *(c->up_wall) = FALSE;
-    } else if ((c->down) && (c->down->in_maze)) {
-        *(c->down_wall) = FALSE;
-    } else if ((c->left) && (c->left->in_maze)) {
-        *(c->left_wall) = FALSE;
-    } else if ((c->right) && (c->right->in_maze)) {
-        *(c->right_wall) = FALSE;
+    if (!first) {
+        _Set *candidate_walls = ct_calloc(sizeof(_Set), 1);
+        if ((c->up) && (c->up->in_maze)) {
+            _Set_push(candidate_walls, c->up_wall);
+        } 
+        if ((c->down) && (c->down->in_maze)) {
+            _Set_push(candidate_walls, c->down_wall);
+        } 
+        if ((c->left) && (c->left->in_maze)) {
+            _Set_push(candidate_walls, c->left_wall);
+        } 
+        if ((c->right) && (c->right->in_maze)) {
+            _Set_push(candidate_walls, c->right_wall);
+        }
+        *((bool *)_Set_random_pop(candidate_walls)) = FALSE;
+        free(candidate_walls);
     }
     if ((c->up) && (!c->up->in_maze) && (!c->up->in_frontier)) {
         _Set_push(frontier, c->up);
@@ -85,11 +93,12 @@ void _prims_add_to_maze(Room_Cell *c, _Set *frontier) {
 void _prims(Room *r) {
     _Set *frontier = ct_calloc(sizeof(_Set), 1);
     Room_Cell *c = r->cells[random_with_max(ROOM_H - 1)][random_with_max(ROOM_W - 1)];
-    _prims_add_to_maze(c, frontier);
+    _prims_add_to_maze(c, frontier, TRUE);
     while (frontier->len > 0) {
         c = (Room_Cell *)_Set_random_pop(frontier);
-        _prims_add_to_maze(c, frontier);
+        _prims_add_to_maze(c, frontier, FALSE);
     }
+    free(frontier);
 }
 
 Room *Room_new(u8 start_row, u8 start_col, u8 n_splits) {
@@ -108,9 +117,11 @@ Room *Room_new(u8 start_row, u8 start_col, u8 n_splits) {
             c->left_wall = NULL;
             if (row < ROOM_H - 1) {
                 c->down_wall = ct_calloc(1, sizeof(bool));
+                *(c->down_wall) = TRUE;
             }
             if (col < ROOM_W - 1) {
                 c->right_wall = ct_calloc(1, sizeof(bool));
+                *(c->right_wall) = TRUE;
             }
             r->cells[row][col] = c;
         }
