@@ -10,6 +10,7 @@ Phy *Physics_new_wall(Enc *e, fixx x, fixy y, bool is_horizontal) {
         TRUE
     );
     if (!p) return NULL;
+    p->what = WHAT_WALL;
     p->collision = TRUE;
     p->calc_collisions = FALSE;
     return p;
