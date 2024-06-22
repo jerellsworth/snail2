@@ -79,7 +79,7 @@ Enc *Enc_new(u8 n_players) {
     snail->pl = e->players[0];
     e->players[0]->p = snail;
 
-    e->seconds_remaining = 60;
+    e->frames_remaining = 16 * 8;
 
     return e;
 }
@@ -134,32 +134,20 @@ void Enc_update(Enc *e) {
         return;
     }
 
-    /*
-    if (e->frames_remaining > 0) {
-        --e->frames_remaining;
-    } else {
-        if (e->seconds_remaining > 0) {
-            --e->seconds_remaining;
-
-            if (e->seconds_remaining == 0) {
-                XGM_startPlayPCMNextCh(SND_SAMPLE_HORN, 15);
-            } else if (e->seconds_remaining <= 5) {
-                XGM_startPlayPCMNextCh(SND_SAMPLE_TICK, 14);
-            }
-            if (e->seconds_remaining > 2 && Physics_count(WHAT_GOBLIN) <= 1) {
-                e->seconds_remaining = 2;
-            }
-
-            char buf[5];
-            sprintf(buf, "%d", e->seconds_remaining);
-            VDP_clearTextBG(BG_A, 20, 1, 16); 
-            VDP_drawTextBG(BG_A, buf, 20, 1);
-            e->frames_remaining = 60;
-        } else {
-            e->state = ENC_COMPLETE;
+    if (!(e->frames & 7)) {
+        // TODO "ticks_remaining" would be more accurate
+        if (e->frames_remaining > 0) {
+            --e->frames_remaining;
+            u8 meter_row = 25 - (e->frames_remaining >> 3);
+            u8 meter_tile_offset = e->frames_remaining & 7;
+            VDP_setTileMapXY(
+                BG_A,
+                TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, e->meter_tile_ind + meter_tile_offset),
+                38,
+                meter_row
+                );
         }
     }
-    */
 }
 
 Enc *Enc_run(Menu *m) {

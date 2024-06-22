@@ -1,4 +1,3 @@
 Maze needs more walls
 * different maze generation algorithm
-pacman-ce-like movement
-slime rather than sparks
+background scrolls diagonally a little
