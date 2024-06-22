@@ -27,39 +27,48 @@ void behave(Encounter *e, Physics *p) {
                     Room_Cell *rc = e->room->cells[r][c];
                     if (
                         (p->buffer_dx > 0) &&
-                        (c < ROOM_W - 1) &&
-                        !(*(rc->right_wall))
+                        (c < ROOM_W - 1)
                         ) {
                         sprintf(buf, "%d", random_with_max(9));
                         VDP_drawText(buf, 1, 3);
                         p->dx = p->buffer_dx;
+                        p->dy = 0;
                         p->buffer_dx = 0;
-                        return;
-                    } 
-                    if (
-                        (p->buffer_dx < 0) &&
-                        (c > 0) &&
-                        !(*(rc->left_wall))
-                        ) {
-                        p->dx = p->buffer_dx;
-                        p->buffer_dx = 0;
-                        return;
-                    } 
-                    if (
-                        (p->buffer_dy > 0) &&
-                        (r < ROOM_H - 1) &&
-                        !(*(rc->down_wall))
-                        ) {
-                        p->dy = p->buffer_dy;
                         p->buffer_dy = 0;
                         return;
                     } 
                     if (
-                        (p->buffer_dy < 0) &&
-                        (r > 0) &&
-                        !(*(rc->up_wall))
+                        (p->buffer_dx < 0) &&
+                        (c > 0)
                         ) {
+                        sprintf(buf, "%d", random_with_max(9));
+                        VDP_drawText(buf, 1, 4);
+                        p->dx = p->buffer_dx;
+                        p->dy = 0;
+                        p->buffer_dx = 0;
+                        p->buffer_dy = 0;
+                        return;
+                    } 
+                    if (
+                        (p->buffer_dy > 0) &&
+                        (r < ROOM_H - 1)
+                        ) {
+                        sprintf(buf, "%d", random_with_max(9));
+                        VDP_drawText(buf, 1, 5);
                         p->dy = p->buffer_dy;
+                        p->dx = 0;
+                        p->buffer_dy = 0;
+                        p->buffer_dx = 0;
+                        return;
+                    } 
+                    if (
+                        (p->buffer_dy < 0) &&
+                        (r > 0)
+                        ) {
+                        sprintf(buf, "%d", random_with_max(9));
+                        VDP_drawText(buf, 1, 6);
+                        p->dy = p->buffer_dy;
+                        p->dx = 0;
                         p->buffer_dy = 0;
                         return;
                     }
@@ -81,11 +90,7 @@ bool interact(Enc *e, Physics *pi, Physics *pj) {
         p1 = pj;
         p2 = pi;
     }
-    char buf[32];
-    sprintf(buf, "%d, %d", p1->what, p2->what);
-    VDP_drawText(buf, 1, 4);
     if (p1->what == WHAT_WALL && p2->what == WHAT_SNAIL) {
-        VDP_drawText("D", 1, 5);
         u8 r = fix16ToRoundedInt(p2->y /*- p2->dy*/ - FIX16(8)) / 24;
         u8 c = fix16ToRoundedInt(p2->x /*- p2->dx*/ - FIX16(8)) / 32;
         p2->x = FIXX(c * 32 + 8);
