@@ -27,88 +27,6 @@ void *_Set_random_pop(_Set *s) {
     return NULL;
 }
 
-bool _region_split(Room *r, u8 src_region, u8 tgt_region) {
-
-    u8 ct = 0;
-    for (u8 row = 0; row < ROOM_H; ++row) {
-        for (u8 col = 0; col < ROOM_W; ++col) {
-            Room_Cell *c = r->cells[row][col];
-            if (c->region == src_region) ++ct;
-        }
-    }
-    if (ct <= 1) return FALSE;
-    _Set *S = ct_calloc(sizeof(_Set), 1);
-    u8 seed1 = random_with_max(ct - 1);
-    u8 seed2 = random_with_max(ct - 1);
-    while (seed2 == seed1) {
-        seed2 = random_with_max(ct - 1);
-    }
-
-    u8 i = 0;
-    for (u8 row = 0; row < ROOM_H; ++row) {
-        for (u8 col = 0; col < ROOM_W; ++col) {
-            if (i == seed1) {
-                Room_Cell *c = r->cells[row][col];
-                c->region = tgt_region;
-                _Set_push(S, c);
-            } else if (i == seed2) {
-                Room_Cell *c = r->cells[row][col];
-                c->region = tgt_region + 1;
-                _Set_push(S, c);
-            }
-            ++i;
-        }
-    }
-    // grow seeds into regions, delete some random walls between them
-    while (S->len > 0) {
-        Room_Cell *c = _Set_random_pop(S);
-        if (c->up && c->up->region == src_region) {
-            c->up->region = c->region;
-            _Set_push(S, c->up);
-        }
-        if (c->down && c->down->region == src_region) {
-            c->down->region = c->region;
-            _Set_push(S, c->down);
-        }
-        if (c->left && c->left->region == src_region) {
-            c->left->region = c->region;
-            _Set_push(S, c->left);
-        }
-        if (c->right && c->right->region == src_region) {
-            c->right->region = c->region;
-            _Set_push(S, c->right);
-        }
-    }
-
-    for (u8 row = 0; row < ROOM_H; ++row) {
-        for (u8 col = 0; col < ROOM_W; ++col) {
-            Room_Cell *c = r->cells[row][col];
-            if (c->right && \
-                (c->region == tgt_region || c->region == tgt_region + 1) && \
-                (c->right->region == tgt_region || c->right->region == tgt_region + 1) && \
-                c->region != c->right->region
-                ) {
-                _Set_push(S, c->right_wall);
-            }
-            if (c->down && \
-                (c->region == tgt_region || c->region == tgt_region + 1) && \
-                (c->down->region == tgt_region || c->down->region == tgt_region + 1) && \
-                c->region != c->down->region
-                ) {
-                _Set_push(S, c->down_wall);
-            }
-        }
-    }
-
-    while (S->len > 1) {
-        *((bool *)_Set_random_pop(S)) = TRUE;
-    }
-
-    free(S);
-
-    return TRUE;
-}
-
 bool _Room_partitioned(Room *r) {
     _Set *S = ct_calloc(sizeof(_Set), 1);
     _Set_push(S, r->cells[0][0]);
@@ -139,6 +57,41 @@ bool _Room_partitioned(Room *r) {
     return FALSE;
 }
 
+void _prims_add_to_maze(Room_Cell *c, _Set *frontier) {
+    c->in_maze = TRUE;
+    if ((c->up) && (c->up->in_maze)) {
+        *(c->up_wall) = FALSE;
+    } else if ((c->down) && (c->down->in_maze)) {
+        *(c->down_wall) = FALSE;
+    } else if ((c->left) && (c->left->in_maze)) {
+        *(c->left_wall) = FALSE;
+    } else if ((c->right) && (c->right->in_maze)) {
+        *(c->right_wall) = FALSE;
+    }
+    if ((c->up) && (!c->up->in_maze) && (!c->up->in_frontier)) {
+        _Set_push(frontier, c->up);
+    }
+    if ((c->down) && (!c->down->in_maze) && (!c->down->in_frontier)) {
+        _Set_push(frontier, c->down);
+    }
+    if ((c->left) && (!c->left->in_maze) && (!c->left->in_frontier)) {
+        _Set_push(frontier, c->left);
+    }
+    if ((c->right) && (!c->right->in_maze) && (!c->right->in_frontier)) {
+        _Set_push(frontier, c->right);
+    }
+}
+
+void _prims(Room *r) {
+    _Set *frontier = ct_calloc(sizeof(_Set), 1);
+    Room_Cell *c = r->cells[random_with_max(ROOM_H - 1)][random_with_max(ROOM_W - 1)];
+    _prims_add_to_maze(c, frontier);
+    while (frontier->len > 0) {
+        c = (Room_Cell *)_Set_random_pop(frontier);
+        _prims_add_to_maze(c, frontier);
+    }
+}
+
 Room *Room_new(u8 start_row, u8 start_col, u8 n_splits) {
     // https://weblog.jamisbuck.org/2015/1/15/better-recursive-division-algorithm.html
     Room *r;
@@ -153,8 +106,12 @@ Room *Room_new(u8 start_row, u8 start_col, u8 n_splits) {
             c->right_wall = NULL;
             c->up_wall = NULL;
             c->left_wall = NULL;
-            if (row < ROOM_H - 1) c->down_wall = ct_calloc(1, sizeof(bool));
-            if (col < ROOM_W - 1) c->right_wall = ct_calloc(1, sizeof(bool));
+            if (row < ROOM_H - 1) {
+                c->down_wall = ct_calloc(1, sizeof(bool));
+            }
+            if (col < ROOM_W - 1) {
+                c->right_wall = ct_calloc(1, sizeof(bool));
+            }
             r->cells[row][col] = c;
         }
     }
@@ -178,11 +135,7 @@ Room *Room_new(u8 start_row, u8 start_col, u8 n_splits) {
         }
     }
 
-    u8 tgt_region = 1;
-    for (u8 src_region = 0; src_region < n_splits; ++src_region) {
-        _region_split(r, src_region, tgt_region);
-        tgt_region += 2;
-    }
+    _prims(r);
 
     if (_Room_partitioned(r)) {
         // final check to make sure this is actually solvable

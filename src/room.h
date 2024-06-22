@@ -26,7 +26,8 @@ struct Room_Cell_s {
     bool *left_wall; // ref
     bool *right_wall; // owned
     u8 region;
-    bool marked;
+    bool in_maze;
+    bool in_frontier;
 };
 
 typedef struct _Set_s {
