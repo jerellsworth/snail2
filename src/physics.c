@@ -130,15 +130,15 @@ void Physics_update(Encounter *e, Physics *p) {
         return;
     }
 
-    if (p->grav_model) p->ddz = -GRAVITY;
+    if (p->grav_model) p->ddy = -GRAVITY;
 
     p->dx += p->ddx;
     p->dy += p->ddy;
     p->dz += p->ddz;
 
     if (p->grav_model) {
-        if (p->dz >= p->terminal_velocity_down) p->dz = p->terminal_velocity_down;
-        if (p->dz <= -p->terminal_velocity_up) p->dz = -p->terminal_velocity_up;
+        if (p->dy >= p->terminal_velocity_down) p->dy = p->terminal_velocity_down;
+        if (p->dy <= -p->terminal_velocity_up) p->dy = -p->terminal_velocity_up;
     }
 
 

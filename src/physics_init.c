@@ -31,3 +31,27 @@ Phy *Physics_new_snail(Enc *e, fixx x, fixy y) {
     p->calc_collisions = TRUE;
     return p;
 }
+
+Phy *Physics_new_slime(Enc *e, fixx x, fixy y, Facing f) {
+    const SpriteDefinition *spr_def,
+    if (f == LEFT || f == RIGHT) {
+        spr_def = &SPR_VSLIME;
+    } else {
+        spr_def = &SPR_HSLIME;
+    }
+    Phy *p = Physics_new(
+        e,
+        &SPR_SNAIL,
+        PAL2,
+        x,
+        y,
+        FALSE
+    );
+    if (!p) return NULL;
+    SPR_setVFlip(p->sp, f == UP);
+    SPR_setHFlip(p->sp, f == RIGHT);
+    SPR_setAnim(p->sp, random_with_max(1));
+    p->what = WHAT_PARTICLE;
+    p->ttl = 60;
+    return p;
+}

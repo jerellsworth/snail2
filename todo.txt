@@ -1,4 +1,4 @@
 Maze needs more walls
+* different maze generation algorithm
 pacman-ce-like movement
 slime rather than sparks
-different maze generation algorithm
