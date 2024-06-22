@@ -14,7 +14,7 @@ void behave(Encounter *e, Physics *p) {
                     if (yoffset < 0) return;
 
                     u8 r = fix16ToInt(yoffset) / 24;
-                    u8 c = fix16ToInt(xoffset) / 32;
+                    u8 c = fix16ToInt(xoffset) >> 5;
 
                     char buf[32];
                     sprintf(buf, "%d (%d), %d (%d)", r, fix16ToInt(yoffset), c, fix16ToInt(xoffset));
@@ -81,14 +81,17 @@ void behave(Encounter *e, Physics *p) {
                     }
                 }
             }
-            if (!(e->frames & 7)) {
-                if (p->buffer_dx < 0) {
+            if (!(e->frames & 3)) {
+                u8 r = fix16ToInt(yoffset) / 24;
+                u8 c = fix16ToInt(xoffset) >> 5;
+                Room_Cell *rc = e->room->cells[r][c];
+                if (p->buffer_dx < 0 && *(rc->left_wall)) {
                     Physics_new_slime(e, p->x, p->col_y, LEFT);
-                } else if (p->buffer_dx > 0) {
+                } else if (p->buffer_dx > 0 && *(rc->right_wall)) {
                     Physics_new_slime(e, p->x + FIXX(p->w), p->col_y, RIGHT);
-                } else if (p->buffer_dy < 0) {
+                } else if (p->buffer_dy < 0 && *(rc->up_wall)) {
                     Physics_new_slime(e, p->col_x, p->y, UP);
-                } else if (p->buffer_dy > 0) {
+                } else if (p->buffer_dy > 0 && *(rc->down_wall)) {
                     Physics_new_slime(e, p->col_x, p->y + FIXY(p->h), DOWN);
                 }
             }
