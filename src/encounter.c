@@ -3,7 +3,7 @@
 void Enc_setup_room(Enc *e) {
     Room *room = Room_new(6, 0, 25);
     for (u8 r = 0; r < ROOM_H; ++r) {
-        for (u8 c = 0; c < ROOM_W - 1; ++c) {
+        for (u8 c = 0; c < ROOM_W; ++c) {
             Room_Cell *rc = room->cells[r][c];
             if (r < (ROOM_H - 1) && *(rc->down_wall)) {
                 Physics_new_wall(e, FIXX(8 + c * 32), FIXY((r + 1) * 24), TRUE);
@@ -35,7 +35,7 @@ void Enc_setup_room(Enc *e) {
         26 
         );
     Physics_new_banana(e, FIXX(264), FIXY(8));
-    Physics_new_brainguy(e, FIXX(8), FIXY(0));
+    Physics_new_brainguy(e, FIXX(40), FIXY(0));
 }
 
 Enc *Enc_new(u8 n_players) {

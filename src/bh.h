@@ -2,7 +2,7 @@
 #define BH_H
 
 #define MAX_PHYSICS_OBJS 80
-#define GRAVITY FIX16(0.5)
+#define GRAVITY FIX16(0.25)
 #define MAX_N_PLAYERS 4
 #define COLLISION_THRESH 512
 

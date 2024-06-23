@@ -2,8 +2,8 @@
 * Have both layers scroll identically on title screen to make it look like we have transparancy ;)
 * score
 * game over if you're too slow clearing a maze
-* sharks...
-* guys throwing physics objects from the top
+* a horizontal threat
+* balls explode the walls that they touch, so maze is more and more exposed as we go
+
 
 # bugs
-some invisible walls on the riight side

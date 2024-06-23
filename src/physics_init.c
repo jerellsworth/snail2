@@ -68,6 +68,7 @@ Phy *Physics_new_brainguy(Enc *e, fixx x, fixy y) {
     if (!p) return NULL;
     p->what = WHAT_BRAINGUY;
     p->w = 29;
+    p->dx = FIX16(0.5);
     return p;
 }
 
@@ -87,8 +88,9 @@ Phy *Physics_new_ball(Enc *e, fixx x, fixy y, fix16 dx, fix16 dy) {
     p->collision = TRUE;
     p->calc_collisions = TRUE;
     p->grav_model = TRUE;
-    p->ttl = 60;
     p->bouncy = TRUE;
+    p->ttl = 90;
+    p->elastic = TRUE;
     p->mass = 1;
     return p;
 }

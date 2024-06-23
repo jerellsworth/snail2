@@ -130,7 +130,7 @@ void Physics_update(Encounter *e, Physics *p) {
         return;
     }
 
-    if (p->grav_model) p->ddy = -GRAVITY;
+    if (p->grav_model) p->ddy = GRAVITY;
 
     p->dx += p->ddx;
     p->dy += p->ddy;
@@ -148,12 +148,10 @@ void Physics_update(Encounter *e, Physics *p) {
     
     p->x += fix16ToFixx(p->dx);
     p->y += fix16ToFixy(p->dy);
-    p->z += fix16ToFixz(p->dz);
 
     if (p->collision && (!p->ignore_walls)) {
         BG_collide(e->bg, p);
     }
-    p->z = max(p->z, 0);
 
     behave(e, p);
 
