@@ -21,4 +21,6 @@ SPRITE SPR_HWALL "sprites/hwall.png" 3 1
 SPRITE SPR_VWALL "sprites/vwall.png" 1 2
 SPRITE SPR_HSLIME "sprites/hslime.png" 1 1 0 15
 SPRITE SPR_VSLIME "sprites/vslime.png" 1 1 0 15
+SPRITE SPR_BRAINGUY "sprites/brainguy.png" 4 3 0 13
+SPRITE SPR_BALL "sprites/ball.png" 1 1 0 7
 XGM XGM_INGAME "songs/E3M6 Myrgharok - On a Sea of Lava.vgm"

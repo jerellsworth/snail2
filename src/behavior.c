@@ -112,12 +112,14 @@ bool interact(Enc *e, Physics *pi, Physics *pj) {
         p2 = pi;
     }
     if (p1->what == WHAT_WALL && p2->what == WHAT_SNAIL) {
-        u8 r = fix16ToRoundedInt(p2->y /*- p2->dy*/ - FIX16(8)) / 24;
-        u8 c = fix16ToRoundedInt(p2->x /*- p2->dx*/ - FIX16(8)) / 32;
+        u8 r = fix16ToRoundedInt(p2->y - FIX16(8)) / 24;
+        u8 c = fix16ToRoundedInt(p2->x - FIX16(8)) / 32;
         p2->x = FIXX(c * 32 + 8);
         p2->y = FIXY(r * 24 + 8);
         p2->dx = 0;
         p2->dy = 0;
+        p2->buffer_dx = 0;
+        p2->buffer_dy = 0;
         return TRUE;
     }
     return FALSE;

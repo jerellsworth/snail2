@@ -52,6 +52,6 @@ Phy *Physics_new_slime(Enc *e, fixx x, fixy y, Facing f) {
     SPR_setHFlip(p->sp, f == RIGHT);
     SPR_setAnim(p->sp, random_with_max(1));
     p->what = WHAT_PARTICLE;
-    p->ttl = 60;
+    p->ttl = 30;
     return p;
 }
