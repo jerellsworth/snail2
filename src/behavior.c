@@ -2,6 +2,16 @@
 
 void behave(Encounter *e, Physics *p) {
     switch (p->what) {
+        case WHAT_BANANA:
+            if (!(e->frames & 7)) {
+                if (p->x <= p->start_x) {
+                    p->x = p->start_x;
+                    p->dx = FIX16(0.2);
+                } else if (p->x > p->start_x + FIXX(12)) {
+                    p->dx = -FIX16(0.2);
+                }
+            }
+            return;
         case WHAT_SNAIL:
             fixx xoffset = p->x - FIXX(8);
             fixy yoffset = p->y - FIXY(8);

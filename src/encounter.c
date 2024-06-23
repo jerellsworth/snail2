@@ -34,6 +34,7 @@ void Enc_setup_room(Enc *e) {
         38,
         26 
         );
+    Physics_new_banana(e, FIXX(264), FIXY(8));
 }
 
 Enc *Enc_new(u8 n_players) {
@@ -44,6 +45,7 @@ Enc *Enc_new(u8 n_players) {
     PAL_setPalette(PAL0, PAL_BG.data, DMA);
     PAL_setPalette(PAL1, PAL_FG.data, DMA);
     PAL_setPalette(PAL2, PAL_SPRITE1.data, DMA);
+    PAL_setPalette(PAL3, PAL_SPRITE2.data, DMA);
 
     e->bg = BG_init(
         &MAP_BG,

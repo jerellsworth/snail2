@@ -9,11 +9,15 @@ enum Thing_e {
     WHAT_WALL,
     WHAT_SNAIL,
     WHAT_BRAINGUY,
-    WHAT_BALL
+    WHAT_BALL,
+    WHAT_BANANA
 };
 
 Phy *Physics_new_wall(Enc *e, fixx x, fixy y, bool is_horizontal);
 Phy *Physics_new_snail(Enc *e, fixx x, fixy y);
 Phy *Physics_new_slime(Enc *e, fixx x, fixy y, Facing f);
+Phy *Physics_new_brainguy(Enc *e, fixx x, fixy y);
+Phy *Physics_new_ball(Enc *e, fixx x, fixy y, fix16 dx, fix16 dy);
+Phy *Physics_new_banana(Enc *e, fixx x, fixy y);
 
 #endif

@@ -55,3 +55,53 @@ Phy *Physics_new_slime(Enc *e, fixx x, fixy y, Facing f) {
     p->ttl = 30;
     return p;
 }
+
+Phy *Physics_new_brainguy(Enc *e, fixx x, fixy y) {
+    Phy *p = Physics_new(
+        e,
+        &SPR_BRAINGUY,
+        PAL3,
+        x,
+        y,
+        FALSE
+    );
+    if (!p) return NULL;
+    p->what = WHAT_BRAINGUY;
+    return p;
+}
+
+Phy *Physics_new_ball(Enc *e, fixx x, fixy y, fix16 dx, fix16 dy) {
+    Phy *p = Physics_new(
+        e,
+        &SPR_BALL,
+        PAL3,
+        x,
+        y,
+        FALSE
+    );
+    if (!p) return NULL;
+    p->dx = dx;
+    p->dy = dy;
+    p->what = WHAT_BALL;
+    p->collision = TRUE;
+    p->calc_collisions = TRUE;
+    p->grav_model = TRUE;
+    p->ttl = 60;
+    return p;
+}
+
+Phy *Physics_new_banana(Enc *e, fixx x, fixy y) {
+    Phy *p = Physics_new(
+        e,
+        &SPR_BANANA,
+        PAL1,
+        x,
+        y,
+        FALSE
+    );
+    p->what = WHAT_BANANA;
+    p->collision = TRUE;
+    p->start_x = x;
+    p->w = 10;
+    return p;
+}
