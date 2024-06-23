@@ -67,6 +67,7 @@ Phy *Physics_new_brainguy(Enc *e, fixx x, fixy y) {
     );
     if (!p) return NULL;
     p->what = WHAT_BRAINGUY;
+    p->w = 29;
     return p;
 }
 

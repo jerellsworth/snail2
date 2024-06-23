@@ -35,6 +35,7 @@ void Enc_setup_room(Enc *e) {
         26 
         );
     Physics_new_banana(e, FIXX(264), FIXY(8));
+    Physics_new_brainguy(e, FIXX(8), FIXY(0));
 }
 
 Enc *Enc_new(u8 n_players) {

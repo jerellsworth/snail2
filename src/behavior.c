@@ -12,6 +12,16 @@ void behave(Encounter *e, Physics *p) {
                 }
             }
             return;
+        case WHAT_BRAINGUY:
+            if (!(e->frames & 7)) {
+                if (p->x <= FIXX(8)) {
+                    p->x = FIXX(8);
+                    p->dx = FIX16(0.5);
+                } else if (p->x > FIXX(228)) {
+                    p->dx = -FIX16(0.5);
+                }
+            }
+            return;
         case WHAT_SNAIL:
             fixx xoffset = p->x - FIXX(8);
             fixy yoffset = p->y - FIXY(8);
