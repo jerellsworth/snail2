@@ -78,15 +78,19 @@ void _prims_add_to_maze(Room_Cell *c, _Set *frontier, bool first) {
     }
     if ((c->up) && (!c->up->in_maze) && (!c->up->in_frontier)) {
         _Set_push(frontier, c->up);
+        c->up->in_frontier = TRUE;
     }
     if ((c->down) && (!c->down->in_maze) && (!c->down->in_frontier)) {
         _Set_push(frontier, c->down);
+        c->down->in_frontier = TRUE;
     }
     if ((c->left) && (!c->left->in_maze) && (!c->left->in_frontier)) {
         _Set_push(frontier, c->left);
+        c->left->in_frontier = TRUE;
     }
     if ((c->right) && (!c->right->in_maze) && (!c->right->in_frontier)) {
         _Set_push(frontier, c->right);
+        c->right->in_frontier = TRUE;
     }
 }
 
