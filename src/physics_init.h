@@ -7,10 +7,10 @@ enum Thing_e {
     WHAT_PROP,
     WHAT_PARTICLE,
     WHAT_WALL,
-    WHAT_SNAIL,
     WHAT_BRAINGUY,
     WHAT_BALL,
-    WHAT_BANANA
+    WHAT_BANANA,
+    WHAT_SNAIL
 };
 
 Phy *Physics_new_wall(Enc *e, fixx x, fixy y, bool is_horizontal);

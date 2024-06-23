@@ -20,6 +20,15 @@ void behave(Encounter *e, Physics *p) {
                 } else if (p->x > FIXX(228)) {
                     p->dx = -FIX16(0.5);
                 }
+                if (!random_with_max(3)) {
+                    Physics_new_ball(
+                        e,
+                        p->x + FIXX(11),
+                        p->y + FIXY(9),
+                        0,
+                        0
+                    );
+                }
             }
             return;
         case WHAT_SNAIL:
@@ -140,6 +149,8 @@ bool interact(Enc *e, Physics *pi, Physics *pj) {
         p2->dy = 0;
         p2->buffer_dx = 0;
         p2->buffer_dy = 0;
+        return TRUE;
+    } else if (p1->what == WHAT_WALL && p2->what == WHAT_BALL) {
         return TRUE;
     }
     return FALSE;

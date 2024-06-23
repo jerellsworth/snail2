@@ -88,6 +88,8 @@ Phy *Physics_new_ball(Enc *e, fixx x, fixy y, fix16 dx, fix16 dy) {
     p->calc_collisions = TRUE;
     p->grav_model = TRUE;
     p->ttl = 60;
+    p->bouncy = TRUE;
+    p->mass = 1;
     return p;
 }
 
