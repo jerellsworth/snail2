@@ -1,6 +1,6 @@
 #include "bh.h"
 
-Phy *Physics_new_wall(Enc *e, fixx x, fixy y, bool is_horizontal) {
+Phy *Physics_new_wall(Enc *e, fixx x, fixy y, u8 cell_row, u8 cell_col, bool is_horizontal) {
     Phy *p = Physics_new(
         e,
         is_horizontal ? &SPR_HWALL : &SPR_VWALL,
@@ -13,6 +13,9 @@ Phy *Physics_new_wall(Enc *e, fixx x, fixy y, bool is_horizontal) {
     p->what = WHAT_WALL;
     p->collision = TRUE;
     p->calc_collisions = FALSE;
+    p->cell_row = cell_row;
+    p->cell_col = cell_col;
+    p->is_horizontal = is_horizontal;
     return p;
 }
 

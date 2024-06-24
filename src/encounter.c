@@ -6,10 +6,10 @@ void Enc_setup_room(Enc *e) {
         for (u8 c = 0; c < ROOM_W; ++c) {
             Room_Cell *rc = room->cells[r][c];
             if (r < (ROOM_H - 1) && *(rc->down_wall)) {
-                Physics_new_wall(e, FIXX(8 + c * 32), FIXY((r + 1) * 24), TRUE);
+                Physics_new_wall(e, FIXX(8 + c * 32), FIXY((r + 1) * 24), r, c, TRUE);
             }
             if (*(rc->right_wall)) {
-                Physics_new_wall(e, FIXX((c + 1) * 32), FIXY(8 + r * 24), FALSE);
+                Physics_new_wall(e, FIXX((c + 1) * 32), FIXY(8 + r * 24), r, c, FALSE);
             }
         }
     }

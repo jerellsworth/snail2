@@ -70,8 +70,9 @@ struct Physics_s {
     fix16 buffer_dx;
     fix16 buffer_dy;
 
-    // TODO dbg
-    Sprite *cursor;
+    u8 cell_row;
+    u8 cell_col;
+    bool is_horizontal;
 };
 
 s16 Physics_register(Physics *p);

@@ -45,25 +45,16 @@ void behave(Encounter *e, Physics *p) {
                     u8 r = fix16ToInt(yoffset) / 24;
                     u8 c = fix16ToInt(xoffset) >> 5;
 
-                    char buf[32];
-                    sprintf(buf, "%d (%d), %d (%d)", r, fix16ToInt(yoffset), c, fix16ToInt(xoffset));
-                    VDP_drawText(buf, 1, 1);
                     if (r >= ROOM_H) return;
                     if (c >= ROOM_W) return;
-                    sprintf(buf, "%d", random_with_max(9));
-                    VDP_drawText(buf, 1, 2);
                     
                     Room_Cell *rc = e->room->cells[r][c];
-                    sprintf(buf, "r:%d,l:%d,d:%d,u:%d", *(rc->right_wall), *(rc->left_wall), *(rc->down_wall), *(rc->up_wall));
-                    VDP_drawText(buf, 1, 3);
                     // TODO the wall checks are innacurate
                     if (
                         (p->buffer_dx > 0) &&
                         (c < ROOM_W - 1) &&
                         !(*(rc->right_wall))
                         ) {
-                        sprintf(buf, "%d", random_with_max(9));
-                        VDP_drawText(buf, 1, 4);
                         p->dx = p->buffer_dx;
                         p->dy = 0;
                         p->buffer_dx = 0;
@@ -75,8 +66,6 @@ void behave(Encounter *e, Physics *p) {
                         (c > 0) &&
                         !(*(rc->left_wall))
                         ) {
-                        sprintf(buf, "%d", random_with_max(9));
-                        VDP_drawText(buf, 1, 5);
                         p->dx = p->buffer_dx;
                         p->dy = 0;
                         p->buffer_dx = 0;
@@ -88,8 +77,6 @@ void behave(Encounter *e, Physics *p) {
                         (r < ROOM_H - 1) &&
                         !(*(rc->down_wall))
                         ) {
-                        sprintf(buf, "%d", random_with_max(9));
-                        VDP_drawText(buf, 1, 6);
                         p->dy = p->buffer_dy;
                         p->dx = 0;
                         p->buffer_dy = 0;
@@ -101,8 +88,6 @@ void behave(Encounter *e, Physics *p) {
                         (r > 0) &&
                         !(*(rc->up_wall))
                         ) {
-                        sprintf(buf, "%d", random_with_max(9));
-                        VDP_drawText(buf, 1, 7);
                         p->dy = p->buffer_dy;
                         p->dx = 0;
                         p->buffer_dy = 0;
@@ -153,6 +138,11 @@ bool interact(Enc *e, Physics *pi, Physics *pj) {
     } else if (p1->what == WHAT_BALL && p2->what == WHAT_BALL) {
         return TRUE;
     } else if (p1->what == WHAT_WALL && p2->what == WHAT_BALL) {
+        if (p1->is_horizontal) {
+            *(e->room->cells[p1->cell_row][p1->cell_col]->down_wall) = FALSE;
+        } else {
+            *(e->room->cells[p1->cell_row][p1->cell_col]->right_wall) = FALSE;
+        }
         Physics_del(p1, e);
         Physics_new_explosion(e, p2->col_x, p2->col_y);
         Physics_del(p2, e);

@@ -13,7 +13,7 @@ enum Thing_e {
     WHAT_SNAIL
 };
 
-Phy *Physics_new_wall(Enc *e, fixx x, fixy y, bool is_horizontal);
+Phy *Physics_new_wall(Enc *e, fixx x, fixy y, u8 cell_row, u8 cell_col, bool is_horizontal);
 Phy *Physics_new_snail(Enc *e, fixx x, fixy y);
 Phy *Physics_new_slime(Enc *e, fixx x, fixy y, Facing f);
 Phy *Physics_new_brainguy(Enc *e, fixx x, fixy y);
