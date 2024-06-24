@@ -174,7 +174,20 @@ Enc *Enc_run(Menu *m, u8 level) {
         SPR_update();
         SYS_doVBlankProcess();
     }
+
     // TODO play sad song or happy song depending on status
+    for (int i = 0; i < MAX_PHYSICS_OBJS; ++i) {
+        Phy *p = ALL_PHYSICS_OBJS[i];
+        if (p == NULL) continue;
+        if (p->what != WHAT_PROP) continue;
+        if (e->failed) {
+            p->grav_model=TRUE;
+        } else {
+            p->dx = -FIX16(random_with_max(8) >> 1);
+            p->dy = -FIX16(random_with_max(8) >> 1);
+        }
+    }
+    
     for (u8 i = 0; i < 120; ++i) {
         BG_update(e->bg);
         Physics_update_all(e);
