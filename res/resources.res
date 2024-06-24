@@ -28,3 +28,5 @@ SPRITE SPR_BANANA "sprites/banana.png" 2 2
 SPRITE SPR_EXPLOSION "sprites/explosion.png" 3 3 0 5
 SPRITE SPR_NUMBERS "sprites/numbers.png" 1 1
 XGM XGM_INGAME "songs/responsibility_louder_square.vgm"
+XGM XGM_WIN "songs/win.vgm"
+XGM XGM_LOSE "songs/lose.vgm"

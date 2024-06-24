@@ -44,7 +44,7 @@ Menu *INTRO_run(Menu *m) {
         &MAP_TITLE_FG,
         &TLS_TITLE_FG,
         &COLLISION_BG,
-        PAL_TITLE.data
+        PAL_BG.data
         );
 
     if (m == NULL) {

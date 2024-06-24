@@ -110,8 +110,7 @@ void Enc_update(Enc *e) {
     if (e->music_on && !(e->frames & 3) && !XGM_isPlaying()) {
         switch (e->song) {
             case 0:
-                // TODO
-                //XGM_startPlay(XGM_INGAME);
+                XGM_startPlay(XGM_INGAME);
                 break;
             default:
                 break;
@@ -179,16 +178,18 @@ Enc *Enc_run(Menu *m, u8 level) {
     for (int i = 0; i < MAX_PHYSICS_OBJS; ++i) {
         Phy *p = ALL_PHYSICS_OBJS[i];
         if (p == NULL) continue;
-        if (p->what != WHAT_PROP) continue;
+        if ((p->what != WHAT_PROP) && (p->what != WHAT_BANANA)) continue;
+        p->collision = FALSE;
         if (e->failed) {
             p->grav_model=TRUE;
         } else {
-            p->dx = -FIX16(random_with_max(8) >> 1);
-            p->dy = -FIX16(random_with_max(8) >> 1);
+            p->dx = -FIX16(random_with_max(8) >> 2);
+            p->dy = -FIX16(random_with_max(8) >> 2);
         }
     }
+    XGM_startPlay(e->failed ? XGM_LOSE : XGM_WIN);
     
-    for (u8 i = 0; i < 120; ++i) {
+    for (u8 i = 0; i < 160; ++i) {
         BG_update(e->bg);
         Physics_update_all(e);
         SPR_update();

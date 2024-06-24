@@ -158,9 +158,9 @@ bool interact(Enc *e, Physics *pi, Physics *pj) {
         // TODO game over
         return TRUE;
     } else if (p1->what == WHAT_BANANA && p2->what == WHAT_SNAIL) {
-        Physics_del(p1, e);
+        p1->collision = FALSE;
+        p1->what = WHAT_PROP;
         e->state = ENC_COMPLETE;
-        // TODO next maze
         return TRUE;
     }
     return FALSE;

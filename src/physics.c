@@ -106,7 +106,7 @@ void Physics_update(Encounter *e, Physics *p) {
 
     if (!p) return;
 
-    if ((e->state != ENC_RUNNING) && p->what != WHAT_PROP) return;
+    if ((e->state != ENC_RUNNING) && p->what != WHAT_PROP && p->what != WHAT_BANANA) return;
 
     if (p->ttl == 0) {
         Physics_del(p, e);

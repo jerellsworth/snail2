@@ -1,10 +1,10 @@
 * title screen
   - add a title
 * sfx, music
-  - use responsibility (louder square) as the ingame tune
   - All by myself would be a good results screen tune. Maybe also title
   - Don't forget to change the sfx driver to avoid pcm2
 * less time in later levels, monster faster, more bombs
 * result screen
 
 # bugs
+* memory leak after about 4 levels
