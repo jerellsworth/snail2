@@ -10,5 +10,6 @@
 * result screen
 * display maze number somewhere
 * remove dbg garbage
+* starts with "WELCOME TO 16-BIT!" in Slimy or Metal font
 
 # bugs
