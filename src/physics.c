@@ -84,7 +84,7 @@ void Physics_del(Physics *p, Enc *e) {
     if (p->instance_counter) --(*p->instance_counter);
     if (p->bg_element) {
         VDP_clearTileMapRect(
-            BG_B,
+            BG_A,
             fixxToInt(p->start_x) / 8,
             fixyToInt(p->start_y) / 8,
             p->spriteDef->w / 8,
@@ -288,7 +288,7 @@ void Physics_update_all(Encounter *enc) {
 void Physics_bg_element_redraw(Physics *p, bool hflip) {
     if (!p->bg_element) return;
     VDP_fillTileMapRectIncT(
-        BG_B,
+        BG_A,
         TILE_ATTR_FULL(p->pal, TRUE, FALSE, hflip, p->bg_tile_idx + p->anim_no * p->n_tiles),
         fixxToInt(p->start_x) / 8,
         fixyToInt(p->start_y) / 8,

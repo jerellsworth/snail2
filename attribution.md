@@ -6,5 +6,5 @@ explosion https://opengameart.org/content/explosion-set-1-m484-games
 
 Other art is from "Space War Man: Platform Shmup Set" by Emcee Flesher (https://opengameart.org/content/space-war-man-platform-shmup-set)
 
-Songs are from The Ultimate Midi Pack (https://opengameart.org/content/ultimate-midi-pack) converted to VGM with ValleyBell's midi2vgm (https://vgmrips.net/forum/viewtopic.php?t=1929)
+Font: https://www.dafont.com/bench-grinder-titling.font?l%5B%5D=10&l%5B%5D=1
 

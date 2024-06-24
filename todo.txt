@@ -1,6 +1,4 @@
-* background scrolls diagonally a little
 * title screen
-  - Have both layers scroll identically on title screen to make it look like we have transparancy ;)
   - add a title
 * sfx, music
   - use responsibility (louder square) as the ingame tune

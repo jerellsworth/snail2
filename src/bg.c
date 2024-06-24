@@ -19,6 +19,8 @@ BG *BG_init(
     VDP_setBackgroundColor(1);
     SYS_doVBlankProcess();
 
+    VDP_setScrollingMode(HSCROLL_TILE, VSCROLL_COLUMN);
+
     return bg;
 };
 
@@ -72,9 +74,17 @@ fixy BG_y(BG *bg) {
 }
 
 void BG_update(BG *bg) {
-    
-    ++bg->frames;
+    u16 offset = bg->frames;
+    //s16 hscroll[28];
+    s16 vscroll[20];
+    //for (u8 i = 0; i < 28; i += 2) hscroll[i] = offset;
+    //for (u8 i = 1; i < 28; i += 2) hscroll[i] = -offset;
+    for (u8 i = 0; i < 20; i += 2) vscroll[i] = offset;
+    for (u8 i = 1; i < 20; i += 2) vscroll[i] = -offset;
+    //VDP_setHorizontalScrollTile(BG_B, 0, hscroll, 28, DMA);
+    VDP_setVerticalScrollTile(BG_B, 0, vscroll, 20, DMA);
 
+    ++bg->frames;
 }
 
 void BG_reset_fx(BG *bg) {
