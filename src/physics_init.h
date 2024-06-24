@@ -20,5 +20,6 @@ Phy *Physics_new_brainguy(Enc *e, fixx x, fixy y);
 Phy *Physics_new_ball(Enc *e, fixx x, fixy y, fix16 dx, fix16 dy);
 Phy *Physics_new_banana(Enc *e, fixx x, fixy y);
 Phy *Physics_new_explosion(Enc *e, fixx x, fixy y);
+Phy *Physics_new_number(Enc *e, fixx x, fixy y, u8 digit);
 
 #endif

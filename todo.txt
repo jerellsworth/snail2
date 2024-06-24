@@ -8,8 +8,8 @@
   - Don't forget to change the sfx driver to avoid pcm2
 * less time in later levels, monster faster, more bombs
 * result screen
-* display maze number somewhere
-* remove dbg garbage
 * starts with "WELCOME TO 16-BIT!" in Slimy or Metal font
+  - maybe permanently affixed to the background
+* level numbers shoot around the screen on win. Fall on loss
 
 # bugs

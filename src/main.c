@@ -97,7 +97,7 @@ int main(bool hard_reset) {
 
         XGM_stopPlay();
 
-        u8 level = 0;
+        u8 level = 1;
         Enc *e;
         while(TRUE) {
             e = Enc_run(m, level);

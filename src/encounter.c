@@ -76,6 +76,15 @@ Enc *Enc_new(u8 n_players, u8 level) {
     snail->pl = e->players[0];
     e->players[0]->p = snail;
 
+    fixy level_y = FIXY(8);
+    Physics_new_number(e, FIXX(304), level_y, level / 100);
+    level_y += FIXY(8);
+    level %= 100;
+    Physics_new_number(e, FIXX(304), level_y, level / 10);
+    level_y += FIXY(8);
+    level %= 10;
+    Physics_new_number(e, FIXX(304), level_y, level);
+
     e->frames_remaining = 16 * 8;
 
     return e;

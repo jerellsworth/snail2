@@ -129,3 +129,18 @@ Phy *Physics_new_explosion(Enc *e, fixx x, fixy y) {
     p->ttl = 5 * 7;
     return p;
 }
+
+Phy *Physics_new_number(Enc *e, fixx x, fixy y, u8 digit) {
+    Phy *p = Physics_new(
+        e,
+        &SPR_NUMBERS,
+        PAL3,
+        x,
+        y,
+        FALSE
+    );
+    if (!p) return NULL;
+    p->what = WHAT_PROP;
+    SPR_setAnim(p->sp, digit);
+    return p;
+}
