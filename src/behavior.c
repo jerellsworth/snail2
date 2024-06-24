@@ -162,11 +162,14 @@ bool interact(Enc *e, Physics *pi, Physics *pj) {
         Physics_del(p1, e);
         Physics_new_explosion(e, p2->col_x, p2->col_y);
         Physics_del(p2, e);
+        e->state = ENC_COMPLETE;
+        e->failed = TRUE;
         // TODO sfx
         // TODO game over
         return TRUE;
     } else if (p1->what == WHAT_BANANA && p2->what == WHAT_SNAIL) {
         Physics_del(p1, e);
+        e->state = ENC_COMPLETE;
         // TODO next maze
         return TRUE;
     }

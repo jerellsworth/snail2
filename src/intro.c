@@ -49,15 +49,6 @@ Menu *INTRO_run(Menu *m) {
 
     if (m == NULL) {
         m = Menu_new(19, 24);
-        Menu_Item *mi_players = Menu_add_item(m, "Players");
-        Menu_Item_add_option(mi_players, "1");
-        Menu_Item_add_option(mi_players, "2");
-        if (JOY_getPortType(PORT_2) == PORT_TYPE_EA4WAYPLAY) {
-            Menu_Item_add_option(mi_players, "3");
-            Menu_Item_add_option(mi_players, "4");
-        }
-
-        mi_players->select_cb = &go_to_go_cb;
 
         Menu_Item *mi_music = Menu_add_item(m, "Music");
         Menu_Item_add_option(mi_music, "On");

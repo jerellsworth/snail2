@@ -95,14 +95,16 @@ int main(bool hard_reset) {
     while (TRUE) {
         m = INTRO_run(m);
 
-        /*
-        Score *scores[4];
-        for (u8 i = 0; i < 4; ++i) scores[i] = Score_new(i);
-        */
         XGM_stopPlay();
 
-        Enc *e = Enc_run(m);
-
+        u8 level = 0;
+        Enc *e;
+        while(TRUE) {
+            e = Enc_run(m, level);
+            if (e->failed) break;
+            Enc_del(e);
+            ++level;
+        }
         results(e);
         Enc_del(e);
     }

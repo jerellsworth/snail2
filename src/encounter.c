@@ -38,8 +38,9 @@ void Enc_setup_room(Enc *e) {
     Physics_new_brainguy(e, FIXX(40), FIXY(0));
 }
 
-Enc *Enc_new(u8 n_players) {
+Enc *Enc_new(u8 n_players, u8 level) {
     Enc *e = ct_calloc(1, sizeof(Encounter));
+    e->level = level;
     e->n_players = n_players;
     e->state = ENC_STARTING;
 
@@ -68,13 +69,6 @@ Enc *Enc_new(u8 n_players) {
         e->players[player_no]->player_no = player_no;
         ++joy;
     }
-    /*
-    for (u8 player_no = n_players; player_no < 4; ++player_no) {
-        e->players[player_no] = Player_new(0);
-        e->players[player_no]->ai_level = 1;
-        e->players[player_no]->player_no = player_no;
-    }
-    */
 
     Enc_setup_room(e);
 
@@ -149,24 +143,32 @@ void Enc_update(Enc *e) {
                 38,
                 meter_row
                 );
+        } else {
+            e->state = ENC_COMPLETE;
+            e->failed = TRUE;
         }
     }
 }
 
-Enc *Enc_run(Menu *m) {
-    Enc *e = Enc_new(m->first->option_selected + 1);
+Enc *Enc_run(Menu *m, u8 level) {
+    Enc *e = Enc_new(1, level);
 
     e->music_on = !(m->first->next->option_selected);
 
     while (e->state != ENC_COMPLETE) {
         Enc_update(e);
-        for (u8 player_no = 0; player_no < 4; ++player_no) {
-            Player_input(e->players[player_no], e);
-        }
+        Player_input(e->players[0], e);
         if (e->state != ENC_PAUSED) {
             BG_update(e->bg);
             Physics_update_all(e);
         }
+        SPR_update();
+        SYS_doVBlankProcess();
+    }
+    // TODO play sad song or happy song depending on status
+    for (u8 i = 0; i < 120; ++i) {
+        BG_update(e->bg);
+        Physics_update_all(e);
         SPR_update();
         SYS_doVBlankProcess();
     }

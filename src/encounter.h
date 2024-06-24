@@ -36,14 +36,17 @@ struct Encounter_s{
     Room *room;
 
     u16 meter_tile_ind;
+
+    u8 level;
+    bool failed;
 };
 
-Enc *Enc_new(u8 n_players);
+Enc *Enc_new(u8 n_players, u8 level);
 
 void Enc_cleanup(Enc *enc);
 void Enc_del(Enc *enc);
 
-Enc *Enc_run(Menu *m);
+Enc *Enc_run(Menu *m, u8 level);
 void Enc_reset_pc(Enc *, Player *, bool death, u8 iframes);
 void Enc_update_score(Enc *e);
 
