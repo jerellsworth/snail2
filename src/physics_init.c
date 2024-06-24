@@ -104,9 +104,25 @@ Phy *Physics_new_banana(Enc *e, fixx x, fixy y) {
         y,
         FALSE
     );
+    if (!p) return NULL;
     p->what = WHAT_BANANA;
     p->collision = TRUE;
     p->start_x = x;
     p->w = 10;
+    return p;
+}
+
+Phy *Physics_new_explosion(Enc *e, fixx x, fixy y) {
+    Phy *p = Physics_new(
+        e,
+        &SPR_EXPLOSION,
+        PAL3,
+        x,
+        y,
+        FALSE
+    );
+    if (!p) return NULL;
+    p->what = WHAT_PARTICLE;
+    p->ttl = 5 * 7;
     return p;
 }

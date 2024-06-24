@@ -2,9 +2,10 @@
 * Have both layers scroll identically on title screen to make it look like we have transparancy ;)
 * score
 * game over if you're too slow clearing a maze
-* a horizontal threat
 * balls explode the walls that they touch, so maze is more and more exposed as we go
 * use responsibility (louder square) as the ingame tune. Don't forget to change the sfx driver to avoid pcm2
+* sfx
+* less time in later levels
 
 
 # bugs

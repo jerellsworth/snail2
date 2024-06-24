@@ -13,7 +13,7 @@ void behave(Encounter *e, Physics *p) {
             }
             return;
         case WHAT_BRAINGUY:
-            if (!(e->frames & 15)) {
+            if (!(e->frames & 7)) {
                 if (p->x <= FIXX(8)) {
                     p->x = FIXX(8);
                     p->dx = FIX16(0.5);
@@ -25,8 +25,7 @@ void behave(Encounter *e, Physics *p) {
                         e,
                         p->x + FIXX(11),
                         p->y + FIXY(9),
-                        //FIX16(8 - random_with_max(4)) >> 2,
-                        0,
+                        FIX16(4 - random_with_max(8)) >> 3,
                         0
                     );
                 }
@@ -151,9 +150,24 @@ bool interact(Enc *e, Physics *pi, Physics *pj) {
         p2->buffer_dx = 0;
         p2->buffer_dy = 0;
         return TRUE;
-    } else if (p1->what == WHAT_WALL && p2->what == WHAT_BALL) {
-        return TRUE;
     } else if (p1->what == WHAT_BALL && p2->what == WHAT_BALL) {
+        return TRUE;
+    } else if (p1->what == WHAT_WALL && p2->what == WHAT_BALL) {
+        Physics_del(p1, e);
+        Physics_new_explosion(e, p2->col_x, p2->col_y);
+        Physics_del(p2, e);
+        // TODO sfx
+        return TRUE;
+    } else if (p1->what == WHAT_BALL && p2->what == WHAT_SNAIL) {
+        Physics_del(p1, e);
+        Physics_new_explosion(e, p2->col_x, p2->col_y);
+        Physics_del(p2, e);
+        // TODO sfx
+        // TODO game over
+        return TRUE;
+    } else if (p1->what == WHAT_BANANA && p2->what == WHAT_SNAIL) {
+        Physics_del(p1, e);
+        // TODO next maze
         return TRUE;
     }
     return FALSE;
