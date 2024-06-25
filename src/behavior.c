@@ -2,6 +2,19 @@
 
 void behave(Encounter *e, Physics *p) {
     switch (p->what) {
+        case WHAT_PROP:
+            if (p->state == 1) {
+                SPR_setFrame(p->sp, min(p->state_frames >> 2, 4)); 
+                if (p->y >= FIXY(100)) {
+                    p->grav_model = FALSE;
+                    p->dx = 0;
+                    p->dy = 0;
+                    p->ddx = 0;
+                    p->ddy = 0;
+                    p->state = 0;
+                }
+            }
+            return;
         case WHAT_BANANA:
             if (!(e->frames & 7)) {
                 if (p->x <= p->start_x) {
@@ -150,7 +163,6 @@ bool interact(Enc *e, Physics *pi, Physics *pj) {
         XGM_startPlayPCMNextCh(SND_SAMPLE_EXPLOSION, 14);
         return TRUE;
     } else if (p1->what == WHAT_BALL && p2->what == WHAT_SNAIL) {
-        return TRUE;// TODO dbg
         Physics_del(p1, e);
         Physics_new_explosion(e, p2->col_x, p2->col_y);
         Physics_del(p2, e);

@@ -172,6 +172,13 @@ Enc *Enc_run(u8 level) {
         p->collision = FALSE;
         if (e->failed) {
             p->grav_model=TRUE;
+            p->state = 1;
+            p->state_frames = 0;
+            if (p->what == WHAT_BANANA) {
+                p->ttl = 30;
+            } else {
+                p->dx = -((FIXY(32) - p->y) >> 2);
+            }
         } else {
             p->dx = -FIX16(random_with_max(8) >> 2);
             p->dy = -FIX16(random_with_max(8) >> 2);
@@ -184,6 +191,9 @@ Enc *Enc_run(u8 level) {
         Physics_update_all(e);
         SPR_update();
         SYS_doVBlankProcess();
+    }
+    if (e->failed) {
+        JOY_waitPressBtn();
     }
     Enc_cleanup(e);
     return e;
