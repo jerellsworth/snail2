@@ -126,7 +126,7 @@ Phy *Physics_new_explosion(Enc *e, fixx x, fixy y) {
     );
     if (!p) return NULL;
     p->what = WHAT_PARTICLE;
-    p->ttl = 5 * 7;
+    p->ttl = 2 * 7 - 1;
     return p;
 }
 

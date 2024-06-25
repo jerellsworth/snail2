@@ -75,6 +75,8 @@ Enc *Enc_new(u8 n_players, u8 level) {
     Phy *snail = Physics_new_snail(e, FIXX(8), FIXY(200));
     snail->pl = e->players[0];
     e->players[0]->p = snail;
+    SPR_setVisibility(snail->sp, VISIBLE);
+    SPR_setPosition(snail->sp, fixxToRoundedInt(snail->x - BG_x(e->bg)), fixyToRoundedInt(snail->y - BG_y(e->bg)));
 
     fixy level_y = FIXY(8);
     Physics_new_number(e, FIXX(304), level_y, level / 100);
@@ -107,6 +109,9 @@ void Enc_cleanup(Enc *e) {
 }
 
 void Enc_update(Enc *e) {
+    ++e->song_frames;
+    if (e->state == ENC_PAUSED) return;
+    if (e->state == ENC_STARTING) return;
     if (e->music_on && !(e->frames & 3) && !XGM_isPlaying()) {
         switch (e->song) {
             case 0:
@@ -116,11 +121,8 @@ void Enc_update(Enc *e) {
                 break;
         }
     }
-    ++e->song_frames;
-    if (e->state == ENC_PAUSED) return;
-    if (e->state == ENC_STARTING) return;
     if (e->frames == 0) {
-        e->bg->behavior == BG_BEHAVIOR_SPARKLE;
+        e->bg->behavior = BG_BEHAVIOR_SPARKLE;
     }
 
     ++e->frames;

@@ -28,9 +28,12 @@ void Player_input(Player *pl, Enc *e) {
 
     if (e->state == ENC_STARTING) {
         if (joy) {
-            if (joy & BUTTON_START) joy = 0;
-            e->state == ENC_RUNNING;
+            e->state = ENC_RUNNING;
             e->frames = 0;
+            if (joy & BUTTON_START) {
+                pl->cooldown = 20;
+                return;
+            }
         }
     }
     if (e->state == ENC_RUNNING) {
@@ -38,7 +41,7 @@ void Player_input(Player *pl, Enc *e) {
         if (!p) return;
         if ((joy & BUTTON_START) && (pl->cooldown == 0)) {
             e->state = ENC_PAUSED;
-            pl->cooldown = 10;
+            pl->cooldown = 20;
             //XGM_startPlayPCMNextCh(SND_SAMPLE_PAUSE, 14);
             return;
         }

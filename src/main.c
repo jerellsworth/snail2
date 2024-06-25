@@ -91,7 +91,6 @@ int main(bool hard_reset) {
     JOY_init();
     snd_init();
 
-    Menu *m = NULL;
     while (TRUE) {
         /*
         m = INTRO_run(m);

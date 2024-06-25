@@ -46,7 +46,7 @@ Enc *Enc_new(u8 n_players, u8 level);
 void Enc_cleanup(Enc *enc);
 void Enc_del(Enc *enc);
 
-Enc *Enc_run(Menu *m, u8 level);
+Enc *Enc_run(u8 level);
 void Enc_reset_pc(Enc *, Player *, bool death, u8 iframes);
 void Enc_update_score(Enc *e);
 

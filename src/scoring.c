@@ -11,6 +11,7 @@ void Score_del(Score *s) {
 }
 
 void Score_tally(Score *s, Player *pl) {
+/*
     s->previous_score = s->previous_score + s->cash_score + s->rank_score;
     s->cash_score = pl->round_score;
     s->rank = pl->round_rank == 0 ? 1 : pl->round_rank;
@@ -25,4 +26,5 @@ void Score_tally(Score *s, Player *pl) {
             s->rank_score = 0;
             break;
     }
+    */
 }

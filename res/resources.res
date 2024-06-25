@@ -25,8 +25,10 @@ SPRITE SPR_VSLIME "sprites/vslime.png" 1 1 0 15
 SPRITE SPR_BRAINGUY "sprites/brainguy.png" 4 3 0 5 
 SPRITE SPR_BALL "sprites/ball.png" 1 1 0 3
 SPRITE SPR_BANANA "sprites/banana.png" 2 2
-SPRITE SPR_EXPLOSION "sprites/explosion.png" 3 3 0 5
+SPRITE SPR_EXPLOSION "sprites/explosion.png" 3 3 0 2
 SPRITE SPR_NUMBERS "sprites/numbers.png" 1 1
 XGM XGM_INGAME "songs/responsibility_louder_square.vgm"
 XGM XGM_WIN "songs/win.vgm"
 XGM XGM_LOSE "songs/lose.vgm"
+WAV WAV_PAUSE "sfx/pause.wav" 4
+WAV WAV_EXPLOSION "sfx/explosion.wav" 4
