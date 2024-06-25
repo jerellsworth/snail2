@@ -1,5 +1,4 @@
 * result screen
 
 # bugs
-* memory leak. Exhausted after about 4 levels. WHile building maze walls
 * running out of vram
