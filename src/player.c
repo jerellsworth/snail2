@@ -42,7 +42,7 @@ void Player_input(Player *pl, Enc *e) {
         if ((joy & BUTTON_START) && (pl->cooldown == 0)) {
             e->state = ENC_PAUSED;
             pl->cooldown = 20;
-            //XGM_startPlayPCMNextCh(SND_SAMPLE_PAUSE, 14);
+            XGM_startPlayPCMNextCh(SND_SAMPLE_PAUSE, 14);
             return;
         }
         switch (p->what) {
@@ -71,7 +71,7 @@ void Player_input(Player *pl, Enc *e) {
         if ((joy & BUTTON_START) && (pl->cooldown == 0)) {
             e->state = ENC_RUNNING;
             pl->cooldown = 10;
-            //XGM_startPlayPCMNextCh(SND_SAMPLE_PAUSE, 14);
+            XGM_startPlayPCMNextCh(SND_SAMPLE_PAUSE, 14);
             return;
         }
     }

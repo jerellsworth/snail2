@@ -250,11 +250,11 @@ void VDP_fillTileMapRectIncT(VDPPlane plane, u16 basetile, u16 x, u16 y, u16 w, 
     }
 }
 
-u16 next_pcm_channel = SOUND_PCM_CH2;
+u16 next_pcm_channel = SOUND_PCM_CH3;
 
 u16 XGM_startPlayPCMNextCh(const u8 id, const u8 priority) {
     u16 ch = next_pcm_channel;
     XGM_startPlayPCM(id, priority, ch);
-    next_pcm_channel = next_pcm_channel == SOUND_PCM_CH4 ? SOUND_PCM_CH2 : next_pcm_channel + 1;
+    next_pcm_channel = next_pcm_channel == SOUND_PCM_CH4 ? SOUND_PCM_CH3 : next_pcm_channel + 1;
     return ch;
 }

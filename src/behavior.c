@@ -146,7 +146,7 @@ bool interact(Enc *e, Physics *pi, Physics *pj) {
         Physics_del(p1, e);
         Physics_new_explosion(e, p2->col_x, p2->col_y);
         Physics_del(p2, e);
-        // TODO sfx
+        XGM_startPlayPCMNextCh(SND_SAMPLE_EXPLOSION, 14);
         return TRUE;
     } else if (p1->what == WHAT_BALL && p2->what == WHAT_SNAIL) {
         Physics_del(p1, e);
@@ -154,8 +154,7 @@ bool interact(Enc *e, Physics *pi, Physics *pj) {
         Physics_del(p2, e);
         e->state = ENC_COMPLETE;
         e->failed = TRUE;
-        // TODO sfx
-        // TODO game over
+        XGM_startPlayPCMNextCh(SND_SAMPLE_EXPLOSION, 14);
         return TRUE;
     } else if (p1->what == WHAT_BANANA && p2->what == WHAT_SNAIL) {
         p1->collision = FALSE;

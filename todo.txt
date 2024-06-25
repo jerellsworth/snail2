@@ -1,6 +1,3 @@
-* sfx, music
-  - All by myself would be a good results screen tune. Maybe also title
-  - Don't forget to change the sfx driver to avoid pcm2
 * less time in later levels, monster faster, more bombs
 * result screen
 
