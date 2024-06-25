@@ -129,7 +129,8 @@ void Enc_update(Enc *e) {
     ++e->frames;
     ++e->state_frames;
 
-    if (!(e->frames & 7)) {
+    u8 framecheck = max(8 >> (e->level >> 2), 4) - 1;
+    if (!(e->frames & framecheck)) {
         // TODO "ticks_remaining" would be more accurate
         if (e->frames_remaining > 0) {
             --e->frames_remaining;

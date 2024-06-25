@@ -1,4 +1,2 @@
-* shorten clock on higher levels
-
 # bugs
 * running out of vram
