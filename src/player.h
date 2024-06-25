@@ -14,15 +14,7 @@ struct Player_s {
     u8 cooldown2;
     Physics *p;
 
-    u8 round_score;
-    u8 round_rank;
-
-    u8 ai_level;
-    Phy *ai_prev_tgts[PLAYER_AI_PREV_TARGET_MEMORY];
-    u8 ai_prev_tgts_idx;
-    u8 ai_state;
-    u8 ai_next_decision;
-    u8 walking_away_frames;
+    bool moved;
 };
 
 Player *Player_new(u8 joy);

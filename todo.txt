@@ -7,4 +7,5 @@
 * result screen
 
 # bugs
-* memory leak after about 4 levels
+* memory leak. Exhausted after about 4 levels
+* running out of vram

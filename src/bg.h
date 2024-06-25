@@ -8,7 +8,8 @@
 
 
 typedef enum {
-    BG_BEHAVIOR_NONE
+    BG_BEHAVIOR_NONE,
+    BG_BEHAVIOR_SPARKLE,
 } BG_Behavior;
 
 struct BG_s {

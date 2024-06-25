@@ -93,14 +93,16 @@ int main(bool hard_reset) {
 
     Menu *m = NULL;
     while (TRUE) {
+        /*
         m = INTRO_run(m);
 
         XGM_stopPlay();
+        */
 
         u8 level = 1;
         Enc *e;
         while(TRUE) {
-            e = Enc_run(m, level);
+            e = Enc_run(level);
             if (e->failed) break;
             Enc_del(e);
             ++level;

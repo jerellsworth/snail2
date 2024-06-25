@@ -26,6 +26,13 @@ void Player_input(Player *pl, Enc *e) {
     if (pl->cooldown > 0) --pl->cooldown;
     if (pl->cooldown2> 0) --pl->cooldown2;
 
+    if (e->state == ENC_STARTING) {
+        if (joy) {
+            if (joy & BUTTON_START) joy = 0;
+            e->state == ENC_RUNNING;
+            e->frames = 0;
+        }
+    }
     if (e->state == ENC_RUNNING) {
 
         if (!p) return;

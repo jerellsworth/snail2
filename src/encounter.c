@@ -42,7 +42,7 @@ Enc *Enc_new(u8 n_players, u8 level) {
     Enc *e = ct_calloc(1, sizeof(Encounter));
     e->level = level;
     e->n_players = n_players;
-    e->state = ENC_STARTING;
+    e->state = level <= 1 ? ENC_STARTING : ENC_RUNNING;
 
     PAL_setPalette(PAL0, PAL_BG.data, DMA);
     PAL_setPalette(PAL1, PAL_FG.data, DMA);
@@ -118,26 +118,13 @@ void Enc_update(Enc *e) {
     }
     ++e->song_frames;
     if (e->state == ENC_PAUSED) return;
+    if (e->state == ENC_STARTING) return;
+    if (e->frames == 0) {
+        e->bg->behavior == BG_BEHAVIOR_SPARKLE;
+    }
 
     ++e->frames;
     ++e->state_frames;
-
-    if (e->state == ENC_STARTING) {
-        /*
-        if (e->state_frames == 1 || e->state_frames == 60 || e->state_frames == 120) {
-                XGM_startPlayPCMNextCh(SND_SAMPLE_TICK, 14);
-        } else if (e->state_frames == 180) {
-                XGM_startPlayPCMNextCh(SND_SAMPLE_LAUGH, 14);
-        }
-        if (e->state_frames >= 60 * 4) {
-            e->state = ENC_RUNNING;
-            e->state_frames = 0;
-            SPR_releaseSprite(e->countdown);
-        }
-        */
-        e->state = ENC_RUNNING;
-        return;
-    }
 
     if (!(e->frames & 7)) {
         // TODO "ticks_remaining" would be more accurate
@@ -158,10 +145,10 @@ void Enc_update(Enc *e) {
     }
 }
 
-Enc *Enc_run(Menu *m, u8 level) {
+Enc *Enc_run(u8 level) {
     Enc *e = Enc_new(1, level);
 
-    e->music_on = !(m->first->next->option_selected);
+    e->music_on = TRUE;
 
     while (e->state != ENC_COMPLETE) {
         Enc_update(e);
