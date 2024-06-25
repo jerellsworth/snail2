@@ -13,7 +13,7 @@ void behave(Encounter *e, Physics *p) {
             }
             return;
         case WHAT_BRAINGUY:
-            u8 framecheck = max(8 >> (e->level >> 2), 2) - 1;
+            u8 framecheck = max(8 >> (e->level >> 4), 2) - 1;
             if (!(e->frames & framecheck)) {
                 if (p->dx == 0 || p->x <= FIXX(8)) {
                     p->x = FIXX(8);
@@ -21,7 +21,7 @@ void behave(Encounter *e, Physics *p) {
                 } else if (p->x > FIXX(228)) {
                     p->dx = -min((FIX16(0.5) << (e->level >> 1)), FIX16(4));
                 }
-                if (!random_with_max(3 - min((e->level >> 2), 3))) {
+                if (!random_with_max(3 - min((e->level >> 3), 3))) {
                     Physics_new_ball(
                         e,
                         p->x + FIXX(11),

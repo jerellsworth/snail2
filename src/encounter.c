@@ -94,6 +94,7 @@ Enc *Enc_new(u8 n_players, u8 level) {
 
 void Enc_del(Enc *e) {
     BG_del(e->bg);
+    Room_del(e->room);
     free(e);
 }
 
