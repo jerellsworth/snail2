@@ -2,7 +2,7 @@
 
 Tile_Manager *Tile_Manager_new(void) {
     Tile_Manager *tm = ct_calloc(1, sizeof(Tile_Manager));
-    tm->next_idx = 128; // TODO figure out what this is actually supposed to be
+    tm->next_idx = 256; // TODO figure out what this is actually supposed to be
     tm->first = ct_calloc(1, sizeof(struct _TM_Elmt_s));
     /* lazily allocating a first element that will always miss so we can avoid some special cases */
     return tm;
@@ -18,7 +18,7 @@ void _Tile_Manager_del_elmt(struct _TM_Elmt_s *elmt) {
     free(elmt);
 }
 
-u8 _Tile_Manager_find_elmt(Tile_Manager *tm, struct _TM_Elmt_s *elmt, const SpriteDefinition *sprDef) {
+u16 _Tile_Manager_find_elmt(Tile_Manager *tm, struct _TM_Elmt_s *elmt, const SpriteDefinition *sprDef) {
     if (elmt->sprDef == sprDef) return elmt->idx;
     if (!elmt->next) {
         struct _TM_Elmt_s *new_elmt = ct_calloc(1, sizeof(struct _TM_Elmt_s));
