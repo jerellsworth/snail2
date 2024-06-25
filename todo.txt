@@ -1,4 +1,3 @@
-* less time in later levels, monster faster, more bombs
 * result screen
 
 # bugs

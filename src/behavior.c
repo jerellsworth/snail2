@@ -13,14 +13,15 @@ void behave(Encounter *e, Physics *p) {
             }
             return;
         case WHAT_BRAINGUY:
-            if (!(e->frames & 7)) {
-                if (p->x <= FIXX(8)) {
+            u8 framecheck = max(8 >> (e->level >> 2), 2) - 1;
+            if (!(e->frames & framecheck)) {
+                if (p->dx == 0 || p->x <= FIXX(8)) {
                     p->x = FIXX(8);
-                    p->dx = FIX16(0.5);
+                    p->dx = min(FIX16(0.5) << (e->level >> 1), FIX16(4));
                 } else if (p->x > FIXX(228)) {
-                    p->dx = -FIX16(0.5);
+                    p->dx = -min((FIX16(0.5) << (e->level >> 1)), FIX16(4));
                 }
-                if (!random_with_max(3)) {
+                if (!random_with_max(3 - min((e->level >> 2), 3))) {
                     Physics_new_ball(
                         e,
                         p->x + FIXX(11),
@@ -149,6 +150,7 @@ bool interact(Enc *e, Physics *pi, Physics *pj) {
         XGM_startPlayPCMNextCh(SND_SAMPLE_EXPLOSION, 14);
         return TRUE;
     } else if (p1->what == WHAT_BALL && p2->what == WHAT_SNAIL) {
+        return TRUE;// TODO dbg
         Physics_del(p1, e);
         Physics_new_explosion(e, p2->col_x, p2->col_y);
         Physics_del(p2, e);
