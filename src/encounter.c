@@ -177,10 +177,10 @@ Enc *Enc_run(u8 level) {
             if (p->what == WHAT_BANANA) {
                 p->ttl = 30;
             } else {
-                p->dx = -((FIXY(32) - p->y) >> 2);
+                p->dx = -(((FIXY(32) - p->y) >> 2) + FIX16(2));
             }
         } else {
-            p->dx = -FIX16(random_with_max(8) >> 2);
+            p->dx = -FIX16((random_with_max(7) + 1) >> 2);
             p->dy = -FIX16(random_with_max(8) >> 2);
         }
     }
